@@ -12,6 +12,12 @@ namespace SAE_NICOLASSE
         private int numappelation;
         private string nomappelation;
 
+        public appelation(int numappelation, string nomappelation)
+        {
+            this.Numappelation = numappelation;
+            this.Nomappelation = nomappelation;
+        }
+
         public int Numappelation
         {
             get
