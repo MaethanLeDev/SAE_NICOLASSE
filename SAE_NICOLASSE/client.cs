@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SAE_NICOLASSE
 {
-    public class client
+    public class Client
     {
 
         private int numClient;
@@ -14,7 +14,7 @@ namespace SAE_NICOLASSE
         private string prenomClient;
         private string mailClient;
 
-        public client(int numClient, string nomClient, string prenomClient, string mailClient)
+        public Client(int numClient, string nomClient, string prenomClient, string mailClient)
         {
             this.NumClient = numClient;
             this.NomClient = nomClient;
