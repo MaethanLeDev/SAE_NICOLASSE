@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SAE_NICOLASSE
+namespace SAE_NICOLASSE.Classe
 {
     public class Appelation
     {
