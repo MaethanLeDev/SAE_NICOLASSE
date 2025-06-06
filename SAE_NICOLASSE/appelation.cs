@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace SAE_NICOLASSE
 {
-    public class appelation
+    public class Appelation
     {
 
         private int numappelation;
         private string nomappelation;
 
-        public appelation(int numappelation, string nomappelation)
+        public Appelation(int numappelation, string nomappelation)
         {
             this.Numappelation = numappelation;
             this.Nomappelation = nomappelation;
