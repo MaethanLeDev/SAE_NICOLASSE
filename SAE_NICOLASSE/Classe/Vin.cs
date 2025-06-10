@@ -15,9 +15,9 @@ namespace SAE_NICOLASSE.Classe
         private string nomVin;
         private decimal prixVin;
         private string descriptif;
-        private int millesime;
+        private int annee;
 
-        public Vin(int numVin, Fournisseur unFournisseur, TypeVin unType, Appelation uneAppelation, string nomVin, decimal prixVin, string descriptif, int millesime)
+        public Vin(int numVin, Fournisseur unFournisseur, TypeVin unType, Appelation uneAppelation, string nomVin, decimal prixVin, string descriptif, int annee)
         {
             this.NumVin = numVin;
             this.UnFournisseur = unFournisseur;
@@ -26,7 +26,7 @@ namespace SAE_NICOLASSE.Classe
             this.NomVin = nomVin;
             this.PrixVin = prixVin;
             this.Descriptif = descriptif;
-            this.Millesime = millesime;
+            this.Annee = annee;
         }
 
         public int NumVin
@@ -120,16 +120,16 @@ namespace SAE_NICOLASSE.Classe
             }
         }
 
-        public int Millesime
+        public int Annee
         {
             get
             {
-                return this.millesime;
+                return this.annee;
             }
 
             set
             {
-                this.millesime = value;
+                this.annee = value;
             }
         }
     }
