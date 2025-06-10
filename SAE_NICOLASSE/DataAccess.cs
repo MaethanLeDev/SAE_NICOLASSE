@@ -7,13 +7,13 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 
 
-namespace TD3_BindingBDPension.Model
+namespace SAE_NICOLASSE
 {
 
     public class DataAccess
     {
         private static readonly DataAccess instance = new DataAccess();
-        private readonly string connectionString = "Host=srv-peda-new;Port=5433;Username=ngrus;Password=;Database=ngrus_pension;Options='-c search_path=ngrus'";
+        private readonly string connectionString = "Host=srv-peda-new;Port=5433;Username=lopesar;Password=ESTBZS;Database=nicolas.bd;Options='-c search_path=leshema'";
         private NpgsqlConnection connection;
 
         public static DataAccess Instance
