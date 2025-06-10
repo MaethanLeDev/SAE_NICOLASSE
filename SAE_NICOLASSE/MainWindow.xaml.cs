@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using SAE_NICOLASSE.UserControls;
 
 
+
 namespace SAE_NICOLASSE
 {
     /// <summary>
@@ -32,7 +33,7 @@ namespace SAE_NICOLASSE
             {
                 var cmd = new NpgsqlCommand("SELECT * FROM Vin"); // Assure-toi que la table Vin existe
                 DataTable dt = DataAccess.Instance.ExecuteSelect(cmd);
-                VinDataGrid.ItemsSource = dt.DefaultView;
+                
             }
             catch (Exception ex)
             {

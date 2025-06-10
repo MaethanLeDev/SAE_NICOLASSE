@@ -6,9 +6,32 @@
         xmlns:local="clr-namespace:SAE_NICOLASSE"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <DataGrid x:Name="dataGridVin" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    <DockPanel>
 
-        <DataGrid x:Name="dataGridCommande" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
-    </Grid>
+        <Menu DockPanel.Dock="Top">
+
+            <MenuItem Header="_Vin">
+
+                <MenuItem Header="_Liste" Click="MenuItem_Click" />
+
+            </MenuItem>
+
+            <MenuItem Header="Demande">
+
+                <MenuItem Header="_Synthese" Click="MenuItem_Click_1" /> >
+
+            </MenuItem>
+
+            <MenuItem Header="Commande">
+
+                <MenuItem Header="_Synthese" Click="MenuItem_Click_2" />
+
+            </MenuItem>
+
+        </Menu >
+
+        <ContentControl x:Name="MainContent" />
+
+
+    </DockPanel>
 </Window>

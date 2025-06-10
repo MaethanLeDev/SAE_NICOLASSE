@@ -1,0 +1,36 @@
+﻿<Window x:Class="SAE_NICOLASSE.Fenêtre.FenetreConnexion"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SAE_NICOLASSE.Fenêtre"
+        mc:Ignorable="d"
+        Title="FenetreConnexion" Height="450" Width="800"
+    WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Label Content="_Utilisateur :" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBox x:Name="txtUser" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" />
+
+        <Label Content="_Mot de passe :" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,10,10,0"/>
+        <PasswordBox x:Name="txtMDP" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0,10,0,0"/>
+
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="btnLogin" Content="Se connecter" Width="100" Margin="0,0,10,0" 
+                    Click="LoginButton_Click" IsDefault="True"/>
+            <Button x:Name="btnCancel" Content="Annuler" Width="75" 
+                    Click="CancelButton_Click" IsCancel="True"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
