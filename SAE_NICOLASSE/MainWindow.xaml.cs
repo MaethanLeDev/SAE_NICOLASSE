@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SAE_NICOLASSE.UserControls;
+using SAE_NICOLASSE.Fenêtre;
 
 
 
@@ -24,21 +25,38 @@ namespace SAE_NICOLASSE
         public MainWindow()
         {
             InitializeComponent();
-            LoadVinData();
+            AfficherLaFenetreDeConnexion();
         }
 
-        private void LoadVinData() // <-- Cette méthode doit être à l'intérieur de la classe MainWindow
+        /* private void LoadVinData() // <-- Cette méthode doit être à l'intérieur de la classe MainWindow
+         {
+             try
+             {
+                 var cmd = new NpgsqlCommand("SELECT * FROM Vin"); // Assure-toi que la table Vin existe
+                 DataTable dt = DataAccess.Instance.ExecuteSelect(cmd);
+
+             }
+             catch (Exception ex)
+             {
+                 MessageBox.Show("Erreur lors du chargement des vins : " + ex.Message);
+             }
+         }*/
+        private void AfficherLaFenetreDeConnexion()
         {
-            try
+           
+            FenetreConnexion loginWindow = new FenetreConnexion();
+
+            //Attend que la fenêtre de connexion soit fermée
+            bool? resultat = loginWindow.ShowDialog();
+
+            
+            if (resultat != true)
             {
-                var cmd = new NpgsqlCommand("SELECT * FROM Vin"); // Assure-toi que la table Vin existe
-                DataTable dt = DataAccess.Instance.ExecuteSelect(cmd);
-                
+                this.Close();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erreur lors du chargement des vins : " + ex.Message);
-            }
+            // Si la connexion réussit (resultat est 'true'), la méthode se termine
+            // simplement. Le constructeur finit son travail, et la MainWindow 
+            // reste affichée et devient utilisable.
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
