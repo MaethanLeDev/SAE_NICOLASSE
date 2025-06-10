@@ -191,16 +191,5 @@
         </ContentControl>
 
         <!--  Pied de page  -->
-        <Border
-            Height="30"
-            Background="#2F2F2F"
-            DockPanel.Dock="Bottom">
-            <TextBlock
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontSize="10"
-                Foreground="White"
-                Text="© 2025 Nicolas - Gestion des Stocks" />
-        </Border>
     </DockPanel>
 </Window>

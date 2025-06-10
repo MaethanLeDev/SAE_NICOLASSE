@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAE_NICOLASSE.Classe;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,24 @@ namespace SAE_NICOLASSE.UserControls
     {
         public UCListeVin()
         {
+            ChargeData();
             InitializeComponent();
+        }
+        public void ChargeData()
+        {
+           /* try
+            {
+                Vin leVin= new Vin("Pension dog");
+                this.DataContext = LaPension;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Problème lors de récupération des données, 
+               
+                veuillez consulter votre admin"); 
+               
+                Application.Current.Shutdown();
+            }*/
         }
     }
 }

@@ -4,40 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SAE_NICOLASSE.UserControls"
+             xmlns:model="clr-namespace:SAE_NICOLASSE"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <DockPanel>
-        <!-- Menu en haut -->
-        
-        <!-- Contenu principal (ContentControl) -->
-        <ContentControl x:Name="MainContent">
-            <!-- Zone de contenu principale avec des formes -->
-            <Grid>
-                <!-- Définition de la disposition de la grille -->
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Un rectangle -->
-                <Rectangle Grid.Row="0" Grid.Column="0" Fill="LightBlue" Width="200" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Rectangle.RenderTransform>
-                        <RotateTransform Angle="45" />
-                    </Rectangle.RenderTransform>
-                </Rectangle>
-
-                <!-- Une ellipse -->
-                <Ellipse Grid.Row="0" Grid.Column="1" Fill="Orange" Width="150" Height="150" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-                <!-- Un cercle (ellipse avec même largeur et hauteur) -->
-                <Ellipse Grid.Row="1" Grid.Column="0" Fill="Green" Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-                <!-- Un autre rectangle avec une bordure -->
-                <Rectangle Grid.Row="1" Grid.Column="1" Stroke="Black" StrokeThickness="2" Width="200" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Grid>
-        </ContentControl>
-    </DockPanel>
+   
+    
 </UserControl>

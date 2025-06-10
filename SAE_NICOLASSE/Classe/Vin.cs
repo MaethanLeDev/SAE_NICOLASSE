@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace SAE_NICOLASSE.Classe
 {
@@ -132,5 +135,53 @@ namespace SAE_NICOLASSE.Classe
                 this.annee = value;
             }
         }
+        public List<Vin> FindAllVins()
+        {
+            List<Vin> lesVins = new List<Vin>();
+            try
+            {
+                
+                string query = @"
+            SELECT 
+                v.numvin, v.nomvin, v.prixvin, v.descriptif, v.millesime,
+                f.numfournisseur, f.nomfournisseur,                  -- Infos Fournisseur
+                t.numtype, t.nomtype,                               -- Infos TypeVin
+                a.numappelation, a.nomappelation                    -- Infos Appelation
+            FROM vin v
+            JOIN fournisseur f ON v.numfournisseur = f.numfournisseur
+            JOIN typevin t ON v.numtype = t.numtype
+            JOIN appelation a ON v.numtype2 = a.numappelation -- Supposition ici
+            ORDER BY v.nomvin;";
+
+                using (NpgsqlCommand cmdSelect = new NpgsqlCommand(query))
+                {
+                    DataTable dt = DataAccess.Instance.ExecuteSelect(cmdSelect);
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        lesVins.Add(new Vin(
+                            Convert.ToInt32(dr["numvin"]),
+
+                            new Fournisseur(Convert.ToInt32(dr["numfournisseur"]), dr["nomfournisseur"].ToString()),
+
+                            new TypeVin(Convert.ToInt32(dr["numtype"]), dr["nomtype"].ToString()),
+
+                            new Appelation(Convert.ToInt32(dr["numappelation"]), dr["nomappelation"].ToString()),
+
+                            dr["nomvin"].ToString(),
+                            Convert.ToDecimal(dr["prixvin"]),
+                            dr["descriptif"].ToString(),
+                            Convert.ToInt32(dr["millesime"])
+                        ));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de la récupération des vins : " + ex.Message);
+            }
+
+            return lesVins;
+        }
+
     }
 }

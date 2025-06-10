@@ -5,32 +5,82 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SAE_NICOLASSE.Fenêtre"
         mc:Ignorable="d"
-        Title="FenetreConnexion" Height="450" Width="800"
-    WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
-    <Grid Margin="15">
+        Title="Nicolas - Connexion" Height="520" Width="400"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="#722F37">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="NicolasGoldBrush" Color="#D4AF37"/>
+        <SolidColorBrush x:Key="NicolasRedBrush" Color="#722F37"/>
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="{StaticResource NicolasGoldBrush}"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style TargetType="Control" x:Key="BaseTextStyle">
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="0,5,0,15"/>
+            <Setter Property="BorderBrush" Value="{StaticResource NicolasGoldBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource BaseTextStyle}"/>
+        <Style TargetType="PasswordBox" BasedOn="{StaticResource BaseTextStyle}"/>
+        <Style TargetType="Button" x:Key="NicolasButtonStyle">
+            <Setter Property="Background" Value="{StaticResource NicolasGoldBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource NicolasRedBrush}"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E0C468"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
 
-        <Label Content="_Utilisateur :" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0"/>
-        <TextBox x:Name="txtUser" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" />
+        <Image Source="/Assets/image_ba015a.png" 
+               MaxHeight="120" Margin="0,30,0,20" Grid.Row="0"/>
 
-        <Label Content="_Mot de passe :" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,10,10,0"/>
-        <PasswordBox x:Name="txtMDP" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0,10,0,0"/>
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="40,0">
+            <Label Content="Identifiant :"/>
+            <TextBox x:Name="txtUser" />
 
-        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="btnLogin" Content="Se connecter" Width="100" Margin="0,0,10,0" 
-                    Click="LoginButton_Click" IsDefault="True"/>
-            <Button x:Name="btnCancel" Content="Annuler" Width="75" 
-                    Click="CancelButton_Click" IsCancel="True"/>
+            <Label Content="Mot de passe :"/>
+            <PasswordBox x:Name="txtMDP" />
         </StackPanel>
 
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,40">
+            <Button x:Name="btnLogin" Content="Se connecter" Width="120" Margin="0,0,10,0"
+                    Style="{StaticResource NicolasButtonStyle}"
+                    Click="LoginButton_Click" IsDefault="True"/>
+            <Button x:Name="btnCancel" Content="Annuler" Width="100" 
+                    Style="{StaticResource NicolasButtonStyle}"
+                    Click="CancelButton_Click" IsCancel="True"/>
+        </StackPanel>
+        <Image Margin="50,1,50,277" Grid.RowSpan="2" Source="/Fichier/logoNicolas.png" Stretch="Fill"/>
     </Grid>
 </Window>

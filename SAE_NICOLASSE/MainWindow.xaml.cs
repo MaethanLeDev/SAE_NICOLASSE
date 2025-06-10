@@ -28,19 +28,8 @@ namespace SAE_NICOLASSE
             {
                 MessageBox.Show("Erreur lors du chargement des vins : " + ex.Message);
             }
-        /* private void LoadVinData() // <-- Cette méthode doit être à l'intérieur de la classe MainWindow
-         {
-             try
-             {
-                 var cmd = new NpgsqlCommand("SELECT * FROM Vin"); // Assure-toi que la table Vin existe
-                 DataTable dt = DataAccess.Instance.ExecuteSelect(cmd);
-
-             }
-             catch (Exception ex)
-             {
-                 MessageBox.Show("Erreur lors du chargement des vins : " + ex.Message);
-             }
-         }*/
+            
+        }
         private void AfficherLaFenetreDeConnexion()
         {
            
