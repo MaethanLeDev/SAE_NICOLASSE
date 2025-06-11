@@ -1,7 +1,6 @@
 ﻿using SAE_NICOLASSE.Classe;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,18 +17,13 @@ using System.Windows.Shapes;
 namespace SAE_NICOLASSE.UserControls
 {
     /// <summary>
-    /// Logique d'interaction pour UCListeVin.xaml
+    /// Logique d'interaction pour UCAffichageVin.xaml
     /// </summary>
-    public partial class UCListeVin : UserControl
+    public partial class UCAffichageVin : UserControl
     {
-        public ObservableCollection<Vin> Vins { get; set; }
-
-        public UCListeVin(Magasin monMagasin)
+        public UCAffichageVin()
         {
             InitializeComponent();
-            Vins = monMagasin.LesVins;
-            itemControlVins.ItemsSource = Vins;
         }
-
     }
 }

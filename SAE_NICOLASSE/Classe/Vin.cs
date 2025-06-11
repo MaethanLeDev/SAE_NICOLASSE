@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +21,9 @@ namespace SAE_NICOLASSE.Classe
         private string nomVin;
         private decimal prixVin;
         private string descriptif;
-        private int annee;
+        private int millesime;
 
-        public Vin(int numVin, Fournisseur unFournisseur, TypeVin unType, Appelation uneAppelation, string nomVin, decimal prixVin, string descriptif, int annee)
+        public Vin(int numVin, Fournisseur unFournisseur, TypeVin unType, Appelation uneAppelation, string nomVin, decimal prixVin, string descriptif, int millesime)
         {
             this.NumVin = numVin;
             this.UnFournisseur = unFournisseur;
@@ -31,7 +32,7 @@ namespace SAE_NICOLASSE.Classe
             this.NomVin = nomVin;
             this.PrixVin = prixVin;
             this.Descriptif = descriptif;
-            this.Annee = annee;
+            this.Millesime = millesime;
         }
         public Vin() { }
 
@@ -126,16 +127,26 @@ namespace SAE_NICOLASSE.Classe
             }
         }
 
-        public int Annee
+        public int Millesime
         {
             get
             {
-                return this.annee;
+                return this.millesime;
             }
 
             set
             {
-                this.annee = value;
+                this.millesime = value;
+            }
+        }
+
+
+        public string ImagePath
+        {
+            get
+            {
+                Debug.WriteLine($"/Fichier/Vin{this.UnType.NomType}.png");
+                return $"/Fichier/Vin{this.UnType.NomType}.png";
             }
         }
 
@@ -162,11 +173,11 @@ namespace SAE_NICOLASSE.Classe
                 v.numvin, v.nomvin, v.prixvin, v.descriptif, v.millesime,
                 f.numfournisseur, f.nomfournisseur,                  -- Infos Fournisseur
                 t.numtype, t.nomtype,                               -- Infos TypeVin
-                a.numtype AS cde_appelation, a.nomappelation                    -- Infos Appelation
+                a.numtype2 AS cde_appelation, a.nomappelation                    -- Infos Appelation
             FROM vin v
             JOIN fournisseur f ON v.numfournisseur = f.numfournisseur
             JOIN typevin t ON v.numtype = t.numtype
-            JOIN appelation a ON v.numtype2 = a.numtype -- Supposition ici
+            JOIN appelation a ON v.numtype2 = a.numtype2 -- Supposition ici
             ORDER BY v.nomvin;";
 
 

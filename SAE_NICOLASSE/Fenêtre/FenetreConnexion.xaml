@@ -81,6 +81,6 @@
                     Style="{StaticResource NicolasButtonStyle}"
                     Click="CancelButton_Click" IsCancel="True"/>
         </StackPanel>
-        <Image Margin="50,1,50,277" Grid.RowSpan="2" Source="/Fichier/logoNicolas.png" Stretch="Fill"/>
+        <Image Margin="120,8,120,334" Source="/Fichier/logoNicolas.png" Stretch="Fill" Grid.Row="1"/>
     </Grid>
 </Window>

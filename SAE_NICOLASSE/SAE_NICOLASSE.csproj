@@ -9,7 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fichier\Employé.png" />
+    <None Remove="Fichier\Invite.png" />
     <None Remove="Fichier\logoNicolas.png" />
+    <None Remove="Fichier\Responsable.png" />
+    <None Remove="Fichier\VinBlanc.png" />
+    <None Remove="Fichier\VinRosé.png" />
+    <None Remove="Fichier\VinRouge.png" />
     <None Remove="image\logoNicolas.png" />
   </ItemGroup>
 
@@ -18,7 +24,25 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Fichier\Employé.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fichier\Invite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Fichier\logoNicolas.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fichier\Responsable.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fichier\VinBlanc.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fichier\VinRosé.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fichier\VinRouge.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

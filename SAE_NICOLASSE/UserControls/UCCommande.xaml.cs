@@ -12,17 +12,28 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using System.Windows;
+using SAE_NICOLASSE.Classe;
 
 namespace SAE_NICOLASSE.UserControls
 {
-    /// <summary>
-    /// Logique d'interaction pour UCCommande.xaml
-    /// </summary>
     public partial class UCCommande : UserControl
     {
         public UCCommande()
         {
             InitializeComponent();
+            ChargerCommandes();
+        }
+
+        private void ChargerCommandes()
+        {
+            // Récupérer toutes les commandes depuis la BDD
+            Commande commande = new Commande();
+            var commandes = commande.FindAll();
+
+            // Lier les commandes récupérées à la DataGrid
+            dataGridCommandes.ItemsSource = new ObservableCollection<Commande>(commandes);
         }
     }
 }

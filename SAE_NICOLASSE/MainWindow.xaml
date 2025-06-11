@@ -3,15 +3,15 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:SAE_NICOLASSE"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
     Title="MainWindow"
     Width="800"
     Height="450"
-    mc:Ignorable="d">
+    Background="#FCF9F9">
 
     <Window.Resources>
-        <!-- Style pour les boutons de navigation -->
+        <!-- Style des boutons -->
         <Style x:Key="NavButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="White"/>
@@ -23,10 +23,10 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" 
-                                CornerRadius="3"
+                                CornerRadius="5"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" 
-                                            VerticalAlignment="Center"/>
+                                              VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -43,153 +43,82 @@
     </Window.Resources>
 
     <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <!-- marge gauche variable -->
+                <ColumnDefinition Width="Auto" MinWidth="656" />
+                <!-- menu -->
+            </Grid.ColumnDefinitions>
 
-        <!--  Bandeau haut  -->
-        <Border
-            Height="50"
+            <Border
+            Grid.Column="1"
+            Height="70"
             Background="#7C0A02"
-            DockPanel.Dock="Top">
-            <Grid Margin="10" HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            CornerRadius="0,0,0,20"
+            VerticalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
+                </Border.Effect>
 
-                <!--  Logo  -->
-                <TextBlock
-                    Margin="10"
-                    VerticalAlignment="Center"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Foreground="White"
-                    Text="NICOLAS" />
+                <Grid Margin="10" HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <!--  Menu  -->
-                <StackPanel
+                    <!-- Logo -->
+                    <Image Source="Fichier/logoNicolas.png"
+                       Width="140"
+                       Height="50"
+                       VerticalAlignment="Center"
+                       Margin="15,0,15,0"/>
+                    <!-- espacement du bord gauche -->
+
+                    <!-- Menu -->
+                    <StackPanel
                     Grid.Column="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
-                    <Button Content="Recherche" Style="{StaticResource NavButtonStyle}" Click="MenuItem_Click" />
-                    <Button Content="Commandes" Style="{StaticResource NavButtonStyle}" Click="MenuItem_Click_1" />
-                    <Button Content="Suivi" Style="{StaticResource NavButtonStyle}" Click="MenuItem_Click_2" />
-                </StackPanel>
+                        <Button x:Name="BoutonCatalogue" Content="Catalogue" Style="{StaticResource NavButtonStyle}" Click="BoutonCatalogue_Click"/>
+                        <Button x:Name="BoutonCommandes" Content="Commandes" Style="{StaticResource NavButtonStyle}" Click="BoutonCommandes_Click"/>
+                        <Button x:Name="BoutonDemandes" Content="Demandes" Style="{StaticResource NavButtonStyle}" Click="BoutonDemandes_Click"/>
+                    </StackPanel>
 
-                <!--  Profil  -->
-                <StackPanel
+                    <!-- Profil -->
+                    <StackPanel
                     Grid.Column="2"
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
-                    <TextBlock
+                        <TextBlock
                         VerticalAlignment="Center"
                         Foreground="White"
-                        Text="Arthur"
-                        Margin="0,0,5,0" />
-                    <Ellipse
-                        Width="24"
-                        Height="24"
-                        Fill="White" />
-                </StackPanel>
-            </Grid>
+                        Text="{Binding ActiveUser}"
+                        Margin="0,0,8,0"/>
+
+                        <Image 
+                             Source="{Binding ImagePath, FallbackValue=Fichier/Invite.png}"
+                             Width="40" Height="40"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border DockPanel.Dock="Bottom" Background="#222" Height="30">
+            <TextBlock Text="© 2025 Nicolas - Gestion des Stocks   |   À propos   Contact   Aide"
+                   Foreground="White"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="12"/>
         </Border>
 
-        <!--  Contenu principal  -->
-        <ContentControl x:Name="MainContent" Margin="30">
-            <!-- Contenu par défaut : page de recherche -->
-            <StackPanel>
-                <!--  Titre  -->
-                <TextBlock
-                    FontSize="18"
-                    FontWeight="Bold"
-                    Text="Recherche de vins"
-                    Margin="0,0,0,20" />
+        <!-- CONTENU PRINCIPAL -->
+        <ContentControl x:Name="MainContent"/>
 
-                <!--  Barre de recherche  -->
-                <DockPanel Margin="0,0,0,20">
-                    <TextBox
-                        Width="400"
-                        Height="30"
-                        Margin="0,0,10,0"
-                        Text="Rechercher un vin..." 
-                        Foreground="Gray"
-                        VerticalContentAlignment="Center"
-                        Padding="10,0" />
-                    <Button
-                        Width="80"
-                        Height="30"
-                        Margin="0,0,10,0"
-                        Content="🔍 Filtre"
-                        Background="LightGray" />
-                    <Button
-                        Width="100"
-                        Height="30"
-                        Background="#7C0A02"
-                        Content="Rechercher"
-                        Foreground="White" />
-                </DockPanel>
 
-                <!--  Grille de vins  -->
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Height="300">
-                    <ItemsControl Name="WineItemsControl">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
+        
 
-                        <!--  Template pour chaque vin  -->
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border
-                                    Width="180"
-                                    Margin="10"
-                                    Background="White"
-                                    BorderBrush="LightGray"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-                                    <StackPanel Margin="10">
-                                        <Image
-                                            Height="120"
-                                            Source="{Binding Image}"
-                                            Stretch="Uniform" />
-                                        <TextBlock
-                                            Margin="0,5,0,0"
-                                            FontWeight="Bold"
-                                            Text="{Binding Nom}" />
-                                        <TextBlock FontStyle="Italic" Text="{Binding Région}" />
-                                        <TextBlock
-                                            Margin="0,5,0,5"
-                                            Foreground="Gray"
-                                            Text="{Binding Stock}" />
-                                        <StackPanel
-                                            HorizontalAlignment="Center"
-                                            Orientation="Horizontal"
-                                            Margin="0,5,0,0">
-                                            <Button
-                                                Width="60"
-                                                Height="25"
-                                                Margin="0,0,5,0"
-                                                Background="White"
-                                                BorderBrush="#7C0A02"
-                                                Content="Détails"
-                                                Foreground="#7C0A02" />
-                                            <Button
-                                                Width="80"
-                                                Height="25"
-                                                Background="#7C0A02"
-                                                Content="Demander"
-                                                Foreground="White" />
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </StackPanel>
-        </ContentControl>
-
-        <!--  Pied de page  -->
     </DockPanel>
 </Window>

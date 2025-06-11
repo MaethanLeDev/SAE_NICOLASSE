@@ -3,6 +3,7 @@ using SAE_NICOLASSE.Classe;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,48 @@ namespace SAE_NICOLASSE.Fenêtre
     public partial class FenetreConnexion : Window
     {
         private List<Employe> lesemployes;
+        private string activeUser = "";
+        private string imagePath = "";
+
+        public List<Employe> Lesemployes
+        {
+            get
+            {
+                return this.lesemployes;
+            }
+
+            set
+            {
+                this.lesemployes = value;
+            }
+        }
+
+        public string ActiveUser
+        {
+            get
+            {
+                return this.activeUser;
+            }
+
+            set
+            {
+                this.activeUser = value;
+            }
+        }
+
+        public string ImagePath
+        {
+            get
+            {
+                return this.imagePath;
+            }
+
+            set
+            {
+                this.imagePath = value;
+            }
+        }
+
         public FenetreConnexion()
         {
             InitializeComponent();
@@ -36,16 +79,24 @@ namespace SAE_NICOLASSE.Fenêtre
             string user = txtUser.Text;
             string mdp = txtMDP.Password;
 
-            foreach (Employe employe in lesemployes)
+            foreach (Employe employe in Lesemployes)
             {
                 if (user == employe.Login)
                 {
                     if (mdp == employe.Mdp)
                     {
                         this.DialogResult = true;
+                        ActiveUser = txtUser.Text;
+                        ImagePath = $"Fichier/{employe.UnRole.NomRole}.png";
+                        
+
+
+
+
                     }
                 }
             }
+           
             
         }
 
@@ -80,7 +131,7 @@ namespace SAE_NICOLASSE.Fenêtre
                     lesEmploye.Add(lEmploye);
                 }
             }
-            this.lesemployes  = lesEmploye;
+            this.Lesemployes  = lesEmploye;
         }
 
 

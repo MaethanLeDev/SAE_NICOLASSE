@@ -9,59 +9,72 @@ namespace SAE_NICOLASSE
 {
     public partial class MainWindow : Window
     {
+        private Magasin monMagasin;
+        private string activeUser = ""; // Ajout de la propriété ActiveUser
+        private string imagePath = ""; // Ajout de la propriété ImagePath
+
         public MainWindow()
         {
-            Magasin monMagasin = new Magasin();
             InitializeComponent();
             AfficherLaFenetreDeConnexion();
+            MonMagasin = new Magasin();
+
+            // Définir le DataContext sur cette instance de MainWindow
+            this.DataContext = this;
+
+            BoutonCatalogue_Click(null, null); // Par défaut, affiche la liste des vins dans le catalogue
         }
 
-        private void LoadVinData()
+        public Magasin MonMagasin
         {
-            try
-            {
-                var cmd = new NpgsqlCommand("SELECT * FROM Vin");
-                DataTable dt = DataAccess.Instance.ExecuteSelect(cmd);
-
-                // Ici vous pouvez utiliser dt pour alimenter votre ItemsControl
-                // WineItemsControl.ItemsSource = dt.DefaultView;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erreur lors du chargement des vins : " + ex.Message);
-            }
-            
+            get { return this.monMagasin; }
+            set { this.monMagasin = value; }
         }
+
+        // Propriété ActiveUser dans MainWindow
+        public string ActiveUser
+        {
+            get { return this.activeUser; }
+            set { this.activeUser = value; }
+        }
+
+        // Propriété ImagePath dans MainWindow
+        public string ImagePath
+        {
+            get { return this.imagePath; }
+            set { this.imagePath = value; }
+        }
+
         private void AfficherLaFenetreDeConnexion()
         {
-           
             FenetreConnexion loginWindow = new FenetreConnexion();
-
             //Attend que la fenêtre de connexion soit fermée
             bool? resultat = loginWindow.ShowDialog();
 
-            
             if (resultat != true)
             {
                 this.Close();
             }
-            // Si la connexion réussit (resultat est 'true'), la méthode se termine
-            // simplement. Le constructeur finit son travail, et la MainWindow 
-            // reste affichée et devient utilisable.
+            else
+            {
+                // Récupérer l'utilisateur connecté et son image
+                this.ActiveUser = loginWindow.ActiveUser;
+                this.ImagePath = loginWindow.ImagePath;
+            }
         }
 
         // Gérer les clics sur les boutons de navigation
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void BoutonCatalogue_Click(object sender, RoutedEventArgs e)
         {
-            MainContent.Content = new UCListeVin();
+            MainContent.Content = new UCListeVin(MonMagasin);
         }
 
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        private void BoutonDemandes_Click(object sender, RoutedEventArgs e)
         {
             MainContent.Content = new UCDemande();
         }
 
-        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        private void BoutonCommandes_Click(object sender, RoutedEventArgs e)
         {
             MainContent.Content = new UCCommande();
         }
