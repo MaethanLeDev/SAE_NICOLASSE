@@ -72,8 +72,8 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
                     <Button Content="Recherche" Style="{StaticResource NavButtonStyle}" Click="MenuItem_Click" />
-                    <Button Content="Commandes" Style="{StaticResource NavButtonStyle}" Click="MenuItem_Click_1" />
-                    <Button Content="Suivi" Style="{StaticResource NavButtonStyle}" Click="MenuItem_Click_2" />
+                    <Button Content="Demande" Style="{StaticResource NavButtonStyle}" Click="MenuItem_Click_1" />
+                    <Button Content="Commande" Style="{StaticResource NavButtonStyle}" Click="MenuItem_Click_2" />
                 </StackPanel>
 
                 <!--  Profil  -->

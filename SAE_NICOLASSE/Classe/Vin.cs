@@ -211,8 +211,8 @@ namespace SAE_NICOLASSE.Classe
             }
 
             return lesVins;
-        
-    }
+
+        }
 
         public List<Vin> FindBySelection(string criteres)
         {
@@ -228,5 +228,6 @@ namespace SAE_NICOLASSE.Classe
         {
             throw new NotImplementedException();
         }
+
     }
 }
