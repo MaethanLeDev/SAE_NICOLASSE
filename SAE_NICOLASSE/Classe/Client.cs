@@ -1,15 +1,17 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using TD3_BindingBDPension.Model;
 
 namespace SAE_NICOLASSE.Classe
 {
-    public class Client
+    public class Client : ICrud<Client>, INotifyPropertyChanged
     {
 
         private int numClient;
@@ -24,6 +26,7 @@ namespace SAE_NICOLASSE.Classe
             this.PrenomClient = prenomClient;
             this.MailClient = mailClient;
         }
+        public Client() { }
 
         public int NumClient
         {
@@ -76,6 +79,19 @@ namespace SAE_NICOLASSE.Classe
                 this.mailClient = value;
             }
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int Create()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Delete()
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Client> FindAll()
         {
             List<Client> lesClients = new List<Client>();
@@ -88,7 +104,7 @@ namespace SAE_NICOLASSE.Classe
                     DataTable dt = DataAccess.Instance.ExecuteSelect(cmdSelect);
                     foreach (DataRow dr in dt.Rows)
                     {
-                        
+
                         Client nouveauClient = new Client(
                             Convert.ToInt32(dr["numclient"]),
                             dr["nomclient"].ToString(),
@@ -108,5 +124,19 @@ namespace SAE_NICOLASSE.Classe
             return lesClients;
         }
 
+        public List<Client> FindBySelection(string criteres)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Read()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Update()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

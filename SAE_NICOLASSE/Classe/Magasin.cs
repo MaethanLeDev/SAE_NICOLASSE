@@ -15,12 +15,12 @@ namespace SAE_NICOLASSE.Classe
         private ObservableCollection<Client> lesClients;
         private ObservableCollection<Commande> lesCommandes;
 
-        public Magasin(ObservableCollection<Demande> lesDemandes, ObservableCollection<Vin> lesVins, ObservableCollection<Client> lesClients, ObservableCollection<Commande> lesCommandes)
+        public Magasin()
         {
-            this.LesDemandes = lesDemandes;
-            this.LesVins = lesVins;
-            this.LesClients = lesClients;
-            this.LesCommandes = lesCommandes;
+            this.LesDemandes = new ObservableCollection<Demande>(new Demande().FindAll());
+            this.LesVins = new ObservableCollection<Vin>(new Vin().FindAll()); ;
+            this.LesClients = new ObservableCollection<Client>(new Client().FindAll()); ;
+            this.LesCommandes = new ObservableCollection<Commande>(new Commande().FindAll()); ; 
         }
 
         public ObservableCollection<Demande> LesDemandes

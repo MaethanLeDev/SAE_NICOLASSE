@@ -1,15 +1,17 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using TD3_BindingBDPension.Model;
 
 namespace SAE_NICOLASSE.Classe
 {
-    public class Vin
+    public class Vin : ICrud<Vin>, INotifyPropertyChanged
     {
         private int numVin;
         private Fournisseur unFournisseur;
@@ -31,6 +33,7 @@ namespace SAE_NICOLASSE.Classe
             this.Descriptif = descriptif;
             this.Annee = annee;
         }
+        public Vin() { }
 
         public int NumVin
         {
@@ -135,43 +138,70 @@ namespace SAE_NICOLASSE.Classe
                 this.annee = value;
             }
         }
-        public List<Vin> FindAllVins()
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int Create()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Delete()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Vin> FindAll()
         {
             List<Vin> lesVins = new List<Vin>();
             try
             {
-                
-                string query = @"
+
+                string sql = @"
             SELECT 
                 v.numvin, v.nomvin, v.prixvin, v.descriptif, v.millesime,
                 f.numfournisseur, f.nomfournisseur,                  -- Infos Fournisseur
                 t.numtype, t.nomtype,                               -- Infos TypeVin
-                a.numappelation, a.nomappelation                    -- Infos Appelation
+                a.numtype AS cde_appelation, a.nomappelation                    -- Infos Appelation
             FROM vin v
             JOIN fournisseur f ON v.numfournisseur = f.numfournisseur
             JOIN typevin t ON v.numtype = t.numtype
-            JOIN appelation a ON v.numtype2 = a.numappelation -- Supposition ici
+            JOIN appelation a ON v.numtype2 = a.numtype -- Supposition ici
             ORDER BY v.nomvin;";
 
-                using (NpgsqlCommand cmdSelect = new NpgsqlCommand(query))
+
+                using (NpgsqlCommand cmdSelect = new NpgsqlCommand(sql))
                 {
+
                     DataTable dt = DataAccess.Instance.ExecuteSelect(cmdSelect);
                     foreach (DataRow dr in dt.Rows)
                     {
-                        lesVins.Add(new Vin(
+
+                        Fournisseur leFournisseur = new Fournisseur(
+                            Convert.ToInt32(dr["numfournisseur"]),
+                            dr["nomfournisseur"].ToString()
+                        );
+                        TypeVin letypeVin = new TypeVin(
+                            Convert.ToInt32(dr["numtype"]),
+                            dr["nomtype"].ToString()
+                        );
+                        Appelation appelation = new Appelation(
+                            Convert.ToInt32(dr["cde_appelation"]),
+                            dr["nomappelation"].ToString()
+                        );
+
+
+                        Vin leVin = new Vin(
                             Convert.ToInt32(dr["numvin"]),
-
-                            new Fournisseur(Convert.ToInt32(dr["numfournisseur"]), dr["nomfournisseur"].ToString()),
-
-                            new TypeVin(Convert.ToInt32(dr["numtype"]), dr["nomtype"].ToString()),
-
-                            new Appelation(Convert.ToInt32(dr["numappelation"]), dr["nomappelation"].ToString()),
-
+                            leFournisseur,
+                            letypeVin,
+                            appelation,
                             dr["nomvin"].ToString(),
                             Convert.ToDecimal(dr["prixvin"]),
                             dr["descriptif"].ToString(),
                             Convert.ToInt32(dr["millesime"])
-                        ));
+                        );
+                        lesVins.Add(leVin);
                     }
                 }
             }
@@ -181,7 +211,22 @@ namespace SAE_NICOLASSE.Classe
             }
 
             return lesVins;
+        
+    }
+
+        public List<Vin> FindBySelection(string criteres)
+        {
+            throw new NotImplementedException();
         }
 
+        public void Read()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Update()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

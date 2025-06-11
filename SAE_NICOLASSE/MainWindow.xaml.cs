@@ -3,6 +3,7 @@ using System.Data;
 using System.Windows;
 using SAE_NICOLASSE.UserControls;
 using SAE_NICOLASSE.Fenêtre;
+using SAE_NICOLASSE.Classe;
 
 namespace SAE_NICOLASSE
 {
@@ -10,6 +11,7 @@ namespace SAE_NICOLASSE
     {
         public MainWindow()
         {
+            Magasin monMagasin = new Magasin();
             InitializeComponent();
             AfficherLaFenetreDeConnexion();
         }
