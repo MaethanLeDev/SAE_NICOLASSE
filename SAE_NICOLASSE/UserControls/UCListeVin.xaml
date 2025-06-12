@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:SAE_NICOLASSE.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="clr-namespace:SAE_NICOLASSE.Classe"
-    d:DesignHeight="300"
+    d:DesignHeight="600"
     d:DesignWidth="1200"
     mc:Ignorable="d">
 
@@ -95,115 +95,304 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Storyboard x:Key="ShowDetailsPanel">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pnlDetails" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+            </ObjectAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="dimmingOverlay" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimation
+                Storyboard.TargetName="dimmingOverlay"
+                Storyboard.TargetProperty="Opacity"
+                To="0.4"
+                Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="pnlDetails"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                To="0"
+                Duration="0:0:0.4">
+                <DoubleAnimation.EasingFunction>
+                    <BackEase Amplitude="0.2" EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="HideDetailsPanel">
+            <DoubleAnimation
+                Storyboard.TargetName="dimmingOverlay"
+                Storyboard.TargetProperty="Opacity"
+                To="0"
+                Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="pnlDetails"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                To="450"
+                Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pnlDetails" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Collapsed}" />
+            </ObjectAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="dimmingOverlay" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Collapsed}" />
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
     </UserControl.Resources>
 
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid>
 
-        <Grid Grid.Row="0" Margin="0,0,0,15" VerticalAlignment="Bottom">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-            <Border Grid.Column="0" Background="White" BorderBrush="#8B1538" BorderThickness="1" CornerRadius="6">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Margin="10,0,5,0" VerticalAlignment="Center" FontSize="16" Foreground="#8B1538" Text="🔍" />
-                    <TextBox x:Name="txtRecherche" Grid.Column="1" Padding="5,8" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" FontSize="14" Foreground="#333333" TextChanged="Filters_Changed" />
-                </Grid>
+            <Grid
+                Grid.Row="0"
+                Margin="0,0,0,15"
+                VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    Background="White"
+                    BorderBrush="#8B1538"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            Margin="10,0,5,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="#8B1538"
+                            Text="🔍" />
+                        <TextBox
+                            x:Name="txtRecherche"
+                            Grid.Column="1"
+                            Padding="5,8"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            FontSize="14"
+                            Foreground="#333333"
+                            TextChanged="Filters_Changed" />
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="1" Width="15" />
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <TextBlock Text="Type de vin" Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" />
+                    <ComboBox x:Name="cmbTypeVin" ItemsSource="{Binding WineTypes}" SelectedIndex="0" SelectionChanged="Filters_Changed" Style="{StaticResource StyledComboBox}" />
+                </StackPanel>
+
+                <Border Grid.Column="3" Width="15" />
+
+                <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                    <TextBlock Text="Appellation" Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" />
+                    <ComboBox x:Name="cmbAppellation" ItemsSource="{Binding Appellations}" SelectedIndex="0" SelectionChanged="Filters_Changed" Style="{StaticResource StyledComboBox}" />
+                </StackPanel>
+
+                <Border Grid.Column="5" Width="15" />
+
+                <StackPanel Grid.Column="6" VerticalAlignment="Center">
+                    <TextBlock Text="Année" Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" />
+                    <Border Background="White" BorderBrush="#8B1538" BorderThickness="1" CornerRadius="4">
+                        <TextBox x:Name="txtAnnee" Height="32" Padding="8,0" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0" FontSize="13" Foreground="#333333" TextChanged="Filters_Changed" />
+                    </Border>
+                </StackPanel>
+
+                <Border Grid.Column="7" Width="15" />
+
+                <StackPanel Grid.Column="8" VerticalAlignment="Center">
+                    <TextBlock Text="Prix max (€)" Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" />
+                    <Border Background="White" BorderBrush="#8B1538" BorderThickness="1" CornerRadius="4">
+                        <TextBox x:Name="txtPrixMax" Height="32" Padding="8,0" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0" FontSize="13" Foreground="#333333" TextChanged="Filters_Changed" />
+                    </Border>
+                </StackPanel>
+
+                <Border Grid.Column="9" Width="15" />
+
+                <Button x:Name="btnReset" Grid.Column="10" Padding="20,8" VerticalAlignment="Center" Background="#8B1538" BorderThickness="0" Click="ResetFilters_Click" Content="Réinitialiser" Cursor="Hand" FontSize="14" FontWeight="SemiBold" Foreground="White">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="6">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#A01A42" />
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter Property="Background" Value="#7A1235" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+
+            <Border Grid.Row="1" Background="White" BorderBrush="#8B1538" BorderThickness="2" CornerRadius="8">
+                <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="itemControlVins" ItemsSource="{Binding FilteredVins}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type model:Vin}">
+                                <Border Width="180" Height="250" Margin="5" Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="135" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="35" />
+                                        </Grid.RowDefinitions>
+                                        <Image Grid.Row="0" Margin="5" Source="{Binding ImagePath, FallbackValue=Fichier/VinRouge.png}" Stretch="UniformToFill" />
+                                        <TextBlock Grid.Row="1" Margin="5,5,5,0" VerticalAlignment="Center" FontSize="14" FontWeight="Bold" Text="{Binding NomVin}" TextAlignment="Center" TextWrapping="Wrap" />
+                                        <TextBlock Grid.Row="2" Margin="2,0,5,5" HorizontalAlignment="Center" FontSize="11" FontStyle="Italic" FontWeight="Light" Foreground="#666666" Text="{Binding Millesime}" />
+                                        <Grid Grid.Row="3" Margin="5,0,5,5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Margin="9,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="#2E7D32" Text="{Binding PrixVin, StringFormat={}{0:C}, ConverterCulture='fr-FR'}" />
+                                            <Button Grid.Column="1" Width="55" Height="28" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center" Click="DetailsButton_Click" Content="Détail" Cursor="Hand" FontSize="11" FontWeight="Medium" Foreground="White">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Background" Value="#8B1538" />
+                                                        <Setter Property="BorderThickness" Value="0" />
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Background" Value="#A91B47" />
+                                                                        </Trigger>
+                                                                        <Trigger Property="IsPressed" Value="True">
+                                                                            <Setter Property="Background" Value="#6B0F2A" />
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </Border>
-
-            <Border Grid.Column="1" Width="15" />
-
-            <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                <TextBlock Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" Text="Type de vin" />
-                <ComboBox x:Name="cmbTypeVin" Style="{StaticResource StyledComboBox}" ItemsSource="{Binding WineTypes}" SelectedIndex="0" SelectionChanged="Filters_Changed" />
-            </StackPanel>
-
-            <Border Grid.Column="3" Width="15" />
-
-            <StackPanel Grid.Column="4" VerticalAlignment="Center">
-                <TextBlock Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" Text="Appellation" />
-                <ComboBox x:Name="cmbAppellation" Style="{StaticResource StyledComboBox}" ItemsSource="{Binding Appellations}" SelectedIndex="0" SelectionChanged="Filters_Changed" />
-            </StackPanel>
-
-            <Border Grid.Column="5" Width="15" />
-
-            <StackPanel Grid.Column="6" VerticalAlignment="Center">
-                <TextBlock Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" Text="Année" />
-                <Border Background="White" BorderBrush="#8B1538" BorderThickness="1" CornerRadius="4">
-                    <TextBox x:Name="txtAnnee" Height="32" Padding="8,0" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0" FontSize="13" Foreground="#333333" TextChanged="Filters_Changed" />
-                </Border>
-            </StackPanel>
-
-            <Border Grid.Column="7" Width="15" />
-
-            <StackPanel Grid.Column="8" VerticalAlignment="Center">
-                <TextBlock Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" Text="Prix max (€)" />
-                <Border Background="White" BorderBrush="#8B1538" BorderThickness="1" CornerRadius="4">
-                    <TextBox x:Name="txtPrixMax" Height="32" Padding="8,0" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0" FontSize="13" Foreground="#333333" TextChanged="Filters_Changed" />
-                </Border>
-            </StackPanel>
-
-            <Border Grid.Column="9" Width="15" />
-
-            <Button x:Name="btnReset" Grid.Column="10" Padding="20,8" VerticalAlignment="Center" Background="#8B1538" BorderThickness="0" Content="Réinitialiser" Cursor="Hand" FontSize="14" FontWeight="SemiBold" Foreground="White" Click="ResetFilters_Click">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="6">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#A01A42" />
-                                        </Trigger>
-                                        <Trigger Property="IsPressed" Value="True">
-                                            <Setter Property="Background" Value="#7A1235" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Style>
-            </Button>
-
         </Grid>
 
-        <Border Grid.Row="1" Background="White" BorderBrush="#8B1538" BorderThickness="2" CornerRadius="8">
-            <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="itemControlVins" ItemsSource="{Binding FilteredVins}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type model:Vin}">
-                            <local:UCAffichageVin />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+        <Border x:Name="dimmingOverlay" Background="Black" MouseUp="CloseDetails_Click" Opacity="0" Visibility="Collapsed" />
+
+        <Border x:Name="pnlDetails" Width="450" HorizontalAlignment="Right" Background="#F9FAFB" CornerRadius="15,0,0,15" Visibility="Collapsed">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="25" Direction="-135" Opacity="0.3" ShadowDepth="2" />
+            </Border.Effect>
+            <Border.RenderTransform>
+                <TranslateTransform X="450" />
+            </Border.RenderTransform>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Image Grid.Row="0" Height="220" Margin="25" Source="{Binding ImagePath, FallbackValue=Fichier/VinRouge.png}" Stretch="Uniform" />
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="25,0">
+                        <TextBlock FontSize="26" FontWeight="Bold" Foreground="#1F2937" Text="{Binding NomVin}" TextWrapping="Wrap" />
+                        <TextBlock Margin="0,5,0,20" FontSize="18" Foreground="#6B7280" Text="{Binding UneAppelation.Nomappelation}" />
+
+                        <Border Margin="0,0,0,15" Padding="0,0,0,15" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
+                            <TextBlock FontSize="14" FontStyle="Italic" Foreground="#4B5563" Text="{Binding Descriptif}" TextWrapping="Wrap" />
+                        </Border>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock FontSize="12" Foreground="#6B7280" Text="Millésime" />
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#1F2937" Text="{Binding Millesime}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock FontSize="12" Foreground="#6B7280" Text="Prix" />
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#10B981" Text="{Binding PrixVin, StringFormat={}{0:C}, ConverterCulture='fr-FR'}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Border Grid.Row="2" Padding="25" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,1,0,0">
+                    <Button Padding="10" HorizontalAlignment="Stretch" Background="#8B1538" Content="Créer une demande" FontSize="16" FontWeight="Bold" Foreground="White">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Border>
+
+                <Button x:Name="btnCloseDetails" Width="32" Height="32" Margin="12" HorizontalAlignment="Right" VerticalAlignment="Top" Background="#E5E7EB" BorderThickness="0" Click="CloseDetails_Click" Cursor="Hand" Foreground="#4B5563" ToolTip="Fermer">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="16" />
+                        </Style>
+                    </Button.Resources>
+                    <TextBlock FontSize="14" FontWeight="Bold" Text="✕" />
+                </Button>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>
