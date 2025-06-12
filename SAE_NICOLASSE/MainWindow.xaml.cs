@@ -4,6 +4,7 @@ using System.Windows;
 using SAE_NICOLASSE.UserControls;
 using SAE_NICOLASSE.Fenêtre;
 using SAE_NICOLASSE.Classe;
+using System;
 
 namespace SAE_NICOLASSE
 {
@@ -15,6 +16,7 @@ namespace SAE_NICOLASSE
 
         public MainWindow()
         {
+            ChargeData();
             InitializeComponent();
             AfficherLaFenetreDeConnexion();
             MonMagasin = new Magasin();
@@ -77,6 +79,20 @@ namespace SAE_NICOLASSE
         private void BoutonCommandes_Click(object sender, RoutedEventArgs e)
         {
             MainContent.Content = new UCCommande();
+        }
+        public void ChargeData()
+        {
+            try
+            {
+                Magasin monMagasin = new Magasin();
+                this.DataContext = monMagasin;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Problème lors de récupération des données,veuillez consulter votre admin");
+                LogError.Log(ex, "Erreur SQL");
+                Application.Current.Shutdown();
+            }
         }
     }
 }

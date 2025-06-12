@@ -318,9 +318,23 @@ namespace SAE_NICOLASSE.Classe
             throw new NotImplementedException();
         }
 
+        
+
         public int Update()
         {
-            throw new NotImplementedException();
+            string sql = @"UPDATE DEMANDE 
+                       SET ACCEPTER = @accepter 
+                       WHERE NUMDEMANDE = @numdemande";
+
+            using (var cmdUpdate = new NpgsqlCommand(sql))
+            {
+
+                cmdUpdate.Parameters.AddWithValue("@accepter", this.Accepter);
+                cmdUpdate.Parameters.AddWithValue("@numdemande", this.NumDemande);
+
+
+                return DataAccess.Instance.ExecuteSet(cmdUpdate);
+            }
         }
     }
 }

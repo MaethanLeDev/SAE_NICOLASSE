@@ -35,5 +35,10 @@ namespace SAE_NICOLASSE.UserControls
             // Lier les commandes récupérées à la DataGrid
             dataGridCommandes.ItemsSource = new ObservableCollection<Commande>(commandes);
         }
+
+        private void dgCommande_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+
+        }
     }
 }

@@ -6,11 +6,26 @@
              xmlns:local="clr-namespace:SAE_NICOLASSE.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    
+
     <Grid>
-        <DataGrid x:Name="dgChiens" ItemsSource="{Binding LesChiens}" AutoGenerateColumns="False" Width="300" Margin="247,60,247,0"  IsReadOnly="True">
+        <DataGrid x:Name="dgDemandes" ItemsSource="{Binding LesDemandes}" AutoGenerateColumns="False" Margin="78,60,93,0" IsReadOnly="False" CellEditEnding="dgDemandes_CellEditEnding">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Numero Demande" Binding="{Binding Nom, ValidatesOnExceptions=true}" Width="*"/>
-                <DataGridTextColumn Header="Maitre" Binding="{Binding Maitre, ValidatesOnExceptions=true}" Width="*"/>
+                <DataGridTextColumn Header="Numero Demande" Binding="{Binding NumDemande, ValidatesOnExceptions=true}" Width="*"/>
+                <DataGridTextColumn Header="Vin" Binding="{Binding UnVin.NomVin, ValidatesOnExceptions=true}" Width="*"/>
+                <DataGridTextColumn Header="Quantité" Binding="{Binding QuantiteDemande, ValidatesOnExceptions=true}" Width="*"/>
+                <DataGridComboBoxColumn Header="Acceptation"
+                        x:Name="colonneStatut"
+                        SelectedItemBinding="{Binding Accepter, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGridComboBoxColumn.ItemsSource>
+                        <x:Array Type="sys:String" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                            <sys:String>En attente</sys:String>
+                            <sys:String>Accepté</sys:String>
+                            <sys:String>Refusé</sys:String>
+                        </x:Array>
+                    </DataGridComboBoxColumn.ItemsSource>
+                </DataGridComboBoxColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

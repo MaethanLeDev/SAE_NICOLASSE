@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAE_NICOLASSE.Classe;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,16 @@ namespace SAE_NICOLASSE.UserControls
     {
         public UCDemande()
         {
+            
             InitializeComponent();
+            
+        }
+
+        private void dgDemandes_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            Demande demandeModifiee = e.Row.DataContext as Demande;
+            demandeModifiee.Update();
+            
         }
     }
 }
