@@ -10,24 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SAE_NICOLASSE.UserControls
+namespace SAE_NICOLASSE.Fenêtre
 {
     /// <summary>
-    /// Logique d'interaction pour UCCommande.xaml
+    /// Logique d'interaction pour FenetreCreationCommande.xaml
     /// </summary>
-    public partial class UCCommande : UserControl
+    public partial class FenetreCreationCommande : Window
     {
-        public UCCommande()
+        public FenetreCreationCommande()
         {
             InitializeComponent();
-        }
-
-        private void dgCommande_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-
         }
     }
 }

@@ -7,9 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <UserControl.Resources>
-        <local:OuiNonToBoolConverter x:Key="OuiNonConverter"/>
-    </UserControl.Resources>
+    
 
     <Grid>
         <DataGrid x:Name="dgDemandes" ItemsSource="{Binding LesDemandes}" AutoGenerateColumns="False" Margin="78,60,93,0" IsReadOnly="False" CellEditEnding="dgDemandes_CellEditEnding">
