@@ -19,10 +19,10 @@ namespace SAE_NICOLASSE
             ChargeData();
             InitializeComponent();
             AfficherLaFenetreDeConnexion();
-            MonMagasin = new Magasin();
+           
 
-            // Définir le DataContext sur cette instance de MainWindow
-            this.DataContext = this;
+            
+            
 
             BoutonCatalogue_Click(null, null); // Par défaut, affiche la liste des vins dans le catalogue
         }
@@ -86,6 +86,7 @@ namespace SAE_NICOLASSE
             {
                 Magasin monMagasin = new Magasin();
                 this.DataContext = monMagasin;
+                this.monMagasin = monMagasin;
             }
             catch (Exception ex)
             {
