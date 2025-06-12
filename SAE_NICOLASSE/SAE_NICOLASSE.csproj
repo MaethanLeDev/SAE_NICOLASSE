@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Fichier\Employé.png" />
+    <None Remove="Fichier\Admin.png" />
     <None Remove="Fichier\Invite.png" />
     <None Remove="Fichier\logoNicolas.png" />
-    <None Remove="Fichier\Responsable.png" />
+    <None Remove="Fichier\Vendeur.png" />
     <None Remove="Fichier\VinBlanc.png" />
-    <None Remove="Fichier\VinRosé.png" />
+    <None Remove="Fichier\VinRose.png" />
     <None Remove="Fichier\VinRouge.png" />
     <None Remove="image\logoNicolas.png" />
   </ItemGroup>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Fichier\Employé.png">
+    <Resource Include="Fichier\Vendeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Fichier\Invite.png">
@@ -33,13 +33,13 @@
     <Resource Include="Fichier\logoNicolas.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Fichier\Responsable.png">
+    <Resource Include="Fichier\Admin.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Fichier\VinBlanc.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Fichier\VinRosé.png">
+    <Resource Include="Fichier\VinRose.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Fichier\VinRouge.png">

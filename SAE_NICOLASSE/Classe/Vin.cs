@@ -145,7 +145,7 @@ namespace SAE_NICOLASSE.Classe
         {
             get
             {
-                Debug.WriteLine($"/Fichier/Vin{this.UnType.NomType}.png");
+                Console.WriteLine($"/Fichier/Vin{this.UnType.NomType}.png");
                 return $"/Fichier/Vin{this.UnType.NomType}.png";
             }
         }
@@ -173,11 +173,11 @@ namespace SAE_NICOLASSE.Classe
                 v.numvin, v.nomvin, v.prixvin, v.descriptif, v.millesime,
                 f.numfournisseur, f.nomfournisseur,                  -- Infos Fournisseur
                 t.numtype, t.nomtype,                               -- Infos TypeVin
-                a.numtype2 AS cde_appelation, a.nomappelation                    -- Infos Appelation
+                a.numtype AS cde_appelation, a.nomappelation                    -- Infos Appelation
             FROM vin v
             JOIN fournisseur f ON v.numfournisseur = f.numfournisseur
             JOIN typevin t ON v.numtype = t.numtype
-            JOIN appelation a ON v.numtype2 = a.numtype2 -- Supposition ici
+            JOIN appelation a ON v.numtype2 = a.numtype -- Supposition ici
             ORDER BY v.nomvin;";
 
 

@@ -206,7 +206,7 @@ namespace SAE_NICOLASSE.Classe
                     -- Sous-jointures obligatoires
                     JOIN FOURNISSEUR f ON v.numfournisseur = f.numfournisseur
                     JOIN TYPEVIN tv ON v.numtype = tv.numtype
-                    JOIN APPELATION a ON v.numtype2 = a.numtype2
+                    JOIN APPELATION a ON v.numtype2 = a.numtype
                     JOIN ROLE r_dem ON e_dem.numrole = r_dem.numrole
                     -- Jointures optionnelles (car une demande n'a pas toujours de commande)
                     LEFT JOIN COMMANDE c ON d.numcommande = c.numcommande
