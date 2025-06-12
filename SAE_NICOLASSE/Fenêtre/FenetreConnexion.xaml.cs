@@ -87,7 +87,7 @@ namespace SAE_NICOLASSE.Fenêtre
                     {
                         this.DialogResult = true;
                         ActiveUser = txtUser.Text;
-                        Console.WriteLine($"Fichier/{employe.UnRole.NomRole}.png");
+                        
                         ImagePath = $"Fichier/{employe.UnRole.NomRole}.png";
                         
 

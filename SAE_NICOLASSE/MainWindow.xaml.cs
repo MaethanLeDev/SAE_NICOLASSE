@@ -5,25 +5,24 @@ using SAE_NICOLASSE.UserControls;
 using SAE_NICOLASSE.Fenêtre;
 using SAE_NICOLASSE.Classe;
 using System;
+using System.ComponentModel; // Ajout nécessaire
 
 namespace SAE_NICOLASSE
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged // Implémentation de INotifyPropertyChanged
     {
         private Magasin monMagasin;
-        private string activeUser = ""; // Ajout de la propriété ActiveUser
-        private string imagePath = ""; // Ajout de la propriété ImagePath
+        private string activeUser = ""; // Variable privée pour ActiveUser
+        private string imagePath = ""; // Variable privée pour ImagePath
+
+        // Événement pour notifier les changements de propriétés
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindow()
         {
-            ChargeData();
             InitializeComponent();
+            ChargeData();
             AfficherLaFenetreDeConnexion();
-           
-
-            
-            
-
             BoutonCatalogue_Click(null, null); // Par défaut, affiche la liste des vins dans le catalogue
         }
 
@@ -33,18 +32,38 @@ namespace SAE_NICOLASSE
             set { this.monMagasin = value; }
         }
 
-        // Propriété ActiveUser dans MainWindow
+        // Propriété ActiveUser avec notification de changement
         public string ActiveUser
         {
             get { return this.activeUser; }
-            set { this.activeUser = value; }
+            set
+            {
+                if (this.activeUser != value)
+                {
+                    this.activeUser = value;
+                    OnPropertyChanged(nameof(ActiveUser)); // Notification du changement
+                }
+            }
         }
 
-        // Propriété ImagePath dans MainWindow
+        // Propriété ImagePath avec notification de changement
         public string ImagePath
         {
             get { return this.imagePath; }
-            set { this.imagePath = value; }
+            set
+            {
+                if (this.imagePath != value)
+                {
+                    this.imagePath = value;
+                    OnPropertyChanged(nameof(ImagePath)); // Notification du changement
+                }
+            }
+        }
+
+        // Méthode pour déclencher l'événement PropertyChanged
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void AfficherLaFenetreDeConnexion()
@@ -52,7 +71,6 @@ namespace SAE_NICOLASSE
             FenetreConnexion loginWindow = new FenetreConnexion();
             //Attend que la fenêtre de connexion soit fermée
             bool? resultat = loginWindow.ShowDialog();
-
             if (resultat != true)
             {
                 this.Close();
@@ -62,6 +80,7 @@ namespace SAE_NICOLASSE
                 // Récupérer l'utilisateur connecté et son image
                 this.ActiveUser = loginWindow.ActiveUser;
                 this.ImagePath = loginWindow.ImagePath;
+                Console.WriteLine($"C'est bon : {this.ActiveUser}, {this.ImagePath}");
             }
         }
 
@@ -80,13 +99,14 @@ namespace SAE_NICOLASSE
         {
             MainContent.Content = new UCCommande();
         }
+
         public void ChargeData()
         {
             try
             {
                 Magasin monMagasin = new Magasin();
-                this.DataContext = monMagasin;
                 this.monMagasin = monMagasin;
+                this.DataContext = this;
             }
             catch (Exception ex)
             {
