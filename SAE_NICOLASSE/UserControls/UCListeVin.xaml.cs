@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
+
 
 namespace SAE_NICOLASSE.UserControls
 {
@@ -159,5 +161,32 @@ namespace SAE_NICOLASSE.UserControls
 
             ApplyFilters();
         }
+
+        private void DetailsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 1. Récupérer le vin associé au bouton qui a été cliqué
+            if (sender is Button button && button.DataContext is Vin selectedVin)
+            {
+                // 2. Définir le DataContext du panneau de détails. 
+                //    Le XAML du panneau va automatiquement utiliser ce vin pour afficher les infos.
+                pnlDetails.DataContext = selectedVin;
+
+                // 3. Récupérer et démarrer l'animation pour faire apparaître le panneau
+                Storyboard sb = (Storyboard)this.Resources["ShowDetailsPanel"];
+                sb.Begin();
+            }
+        }
+
+        private void CloseDetails_Click(object sender, RoutedEventArgs e)
+        {
+            // Récupérer et démarrer l'animation pour faire disparaître le panneau
+            Storyboard sb = (Storyboard)this.Resources["HideDetailsPanel"];
+            sb.Begin();
+        }
+
+        // ===============================================================
+        // FIN : AJOUT DE LA LOGIQUE POUR LE PANNEAU DE DÉTAILS            
+        // ===============================================================
     }
+
 }
