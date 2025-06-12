@@ -9,471 +9,167 @@
     d:DesignHeight="300"
     d:DesignWidth="1200"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="StyledComboBox" TargetType="ComboBox">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#8B1538" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#333333" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton
+                                x:Name="ToggleButton"
+                                Grid.Column="2"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                ClickMode="Press"
+                                Focusable="False"
+                                IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="4">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="20" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <Path
+                                                                Grid.Column="1"
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                Data="M 0 0 L 4 4 L 8 0 Z"
+                                                                Fill="#8B1538" />
+                                                        </Grid>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                            <ContentPresenter
+                                x:Name="ContentSite"
+                                Margin="8,0,25,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding SelectionBoxItem}"
+                                IsHitTestVisible="False" />
+                            <Popup
+                                x:Name="Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                Placement="Bottom"
+                                PopupAnimation="Slide">
+                                <Grid
+                                    x:Name="DropDown"
+                                    MinWidth="{TemplateBinding ActualWidth}"
+                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                    SnapsToDevicePixels="True">
+                                    <Border
+                                        x:Name="DropDownBorder"
+                                        Background="White"
+                                        BorderBrush="#8B1538"
+                                        BorderThickness="1"
+                                        CornerRadius="4" />
+                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <!--  Ligne du haut : Barre de recherche et filtres  -->
             <RowDefinition Height="*" />
-            <!--  Ligne du bas : Catalogue des vins  -->
         </Grid.RowDefinitions>
 
-        <!--  LIGNE DU HAUT : Barre de recherche et filtres  -->
-        <Grid Grid.Row="0" Margin="0,0,0,15">
+        <Grid Grid.Row="0" Margin="0,0,0,15" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
-                <!--  Barre de recherche  -->
                 <ColumnDefinition Width="Auto" />
-                <!--  Espacement  -->
                 <ColumnDefinition Width="150" />
-                <!--  Type de vin  -->
                 <ColumnDefinition Width="Auto" />
-                <!--  Espacement  -->
                 <ColumnDefinition Width="150" />
-                <!--  Appellation  -->
                 <ColumnDefinition Width="Auto" />
-                <!--  Espacement  -->
                 <ColumnDefinition Width="100" />
-                <!--  Année  -->
                 <ColumnDefinition Width="Auto" />
-                <!--  Espacement  -->
                 <ColumnDefinition Width="100" />
-                <!--  Prix max  -->
                 <ColumnDefinition Width="Auto" />
-                <!--  Espacement  -->
                 <ColumnDefinition Width="Auto" />
-                <!--  Bouton Filtres  -->
             </Grid.ColumnDefinitions>
 
-            <!--  Barre de recherche  -->
-            <Border
-                Grid.Column="0"
-                Background="White"
-                BorderBrush="#8B1538"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Grid.Column="0" Background="White" BorderBrush="#8B1538" BorderThickness="1" CornerRadius="6">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
-                    <!--  Icône de recherche  -->
-                    <TextBlock
-                        Grid.Column="0"
-                        Margin="10,0,5,0"
-                        VerticalAlignment="Center"
-                        FontSize="16"
-                        Foreground="#8B1538"
-                        Text="🔍" />
-
-                    <!--  TextBox de recherche  -->
-                    <TextBox
-                        x:Name="txtRecherche"
-                        Grid.Column="1"
-                        Padding="5,8"
-                        VerticalAlignment="Center"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        FontSize="14"
-                        Foreground="#333333">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="TextBox">
-                                            <Grid>
-                                                <ScrollViewer x:Name="PART_ContentHost" />
-                                                <TextBlock
-                                                    Margin="5,0,0,0"
-                                                    VerticalAlignment="Center"
-                                                    Foreground="#AAAAAA"
-                                                    IsHitTestVisible="False"
-                                                    Text="Rechercher un vin...">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value="">
-                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                    <TextBlock Grid.Column="0" Margin="10,0,5,0" VerticalAlignment="Center" FontSize="16" Foreground="#8B1538" Text="🔍" />
+                    <TextBox x:Name="txtRecherche" Grid.Column="1" Padding="5,8" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" FontSize="14" Foreground="#333333" TextChanged="Filters_Changed" />
                 </Grid>
             </Border>
 
-            <!--  Espacement  -->
             <Border Grid.Column="1" Width="15" />
 
-            <!--  Filtre Type de vin  -->
             <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                <TextBlock
-                    Margin="0,0,0,3"
-                    FontSize="12"
-                    FontWeight="Medium"
-                    Foreground="#666666"
-                    Text="Type de vin" />
-                <ComboBox
-                    x:Name="cmbTypeVin"
-                    Height="34"
-                    Background="White"
-                    BorderBrush="#8B1538"
-                    BorderThickness="1"
-                    FontSize="13"
-                    Foreground="#333333">
-                    <ComboBox.Style>
-                        <Style TargetType="ComboBox">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ComboBox">
-                                        <Grid>
-                                            <ToggleButton
-                                                x:Name="ToggleButton"
-                                                Grid.Column="2"
-                                                Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                ClickMode="Press"
-                                                Focusable="False"
-                                                IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                                                <ToggleButton.Style>
-                                                    <Style TargetType="ToggleButton">
-                                                        <Setter Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="ToggleButton">
-                                                                    <Border
-                                                                        Background="{TemplateBinding Background}"
-                                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                                                        CornerRadius="4">
-                                                                        <Grid>
-                                                                            <Grid.ColumnDefinitions>
-                                                                                <ColumnDefinition Width="*" />
-                                                                                <ColumnDefinition Width="20" />
-                                                                            </Grid.ColumnDefinitions>
-                                                                            <Path
-                                                                                Grid.Column="1"
-                                                                                HorizontalAlignment="Center"
-                                                                                VerticalAlignment="Center"
-                                                                                Data="M 0 0 L 4 4 L 8 0 Z"
-                                                                                Fill="#8B1538" />
-                                                                        </Grid>
-                                                                    </Border>
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Style>
-                                                </ToggleButton.Style>
-                                            </ToggleButton>
-                                            <ContentPresenter
-                                                x:Name="ContentSite"
-                                                Margin="8,0,25,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Content="{TemplateBinding SelectionBoxItem}"
-                                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                                IsHitTestVisible="False" />
-                                            <Popup
-                                                x:Name="Popup"
-                                                AllowsTransparency="True"
-                                                Focusable="False"
-                                                IsOpen="{TemplateBinding IsDropDownOpen}"
-                                                Placement="Bottom"
-                                                PopupAnimation="Slide">
-                                                <Grid
-                                                    x:Name="DropDown"
-                                                    MinWidth="{TemplateBinding ActualWidth}"
-                                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                                    SnapsToDevicePixels="True">
-                                                    <Border
-                                                        x:Name="DropDownBorder"
-                                                        Background="White"
-                                                        BorderBrush="#8B1538"
-                                                        BorderThickness="1"
-                                                        CornerRadius="4" />
-                                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
-                                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
-                                                    </ScrollViewer>
-                                                </Grid>
-                                            </Popup>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ComboBox.Style>
-                    <ComboBoxItem Content="Tous types" IsSelected="True" />
-                    <ComboBoxItem Content="Rouge" />
-                    <ComboBoxItem Content="Blanc" />
-                    <ComboBoxItem Content="Rosé" />
-                </ComboBox>
+                <TextBlock Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" Text="Type de vin" />
+                <ComboBox x:Name="cmbTypeVin" Style="{StaticResource StyledComboBox}" ItemsSource="{Binding WineTypes}" SelectedIndex="0" SelectionChanged="Filters_Changed" />
             </StackPanel>
 
-            <!--  Espacement  -->
             <Border Grid.Column="3" Width="15" />
 
-            <!--  Filtre Appellation  -->
             <StackPanel Grid.Column="4" VerticalAlignment="Center">
-                <TextBlock
-                    Margin="0,0,0,3"
-                    FontSize="12"
-                    FontWeight="Medium"
-                    Foreground="#666666"
-                    Text="Appellation" />
-                <ComboBox
-                    x:Name="cmbAppellation"
-                    Height="34"
-                    Background="White"
-                    BorderBrush="#8B1538"
-                    BorderThickness="1"
-                    FontSize="13"
-                    Foreground="#333333">
-                    <ComboBox.Style>
-                        <Style TargetType="ComboBox">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ComboBox">
-                                        <Grid>
-                                            <ToggleButton
-                                                x:Name="ToggleButton"
-                                                Grid.Column="2"
-                                                Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                ClickMode="Press"
-                                                Focusable="False"
-                                                IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                                                <ToggleButton.Style>
-                                                    <Style TargetType="ToggleButton">
-                                                        <Setter Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="ToggleButton">
-                                                                    <Border
-                                                                        Background="{TemplateBinding Background}"
-                                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                                                        CornerRadius="4">
-                                                                        <Grid>
-                                                                            <Grid.ColumnDefinitions>
-                                                                                <ColumnDefinition Width="*" />
-                                                                                <ColumnDefinition Width="20" />
-                                                                            </Grid.ColumnDefinitions>
-                                                                            <Path
-                                                                                Grid.Column="1"
-                                                                                HorizontalAlignment="Center"
-                                                                                VerticalAlignment="Center"
-                                                                                Data="M 0 0 L 4 4 L 8 0 Z"
-                                                                                Fill="#8B1538" />
-                                                                        </Grid>
-                                                                    </Border>
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Style>
-                                                </ToggleButton.Style>
-                                            </ToggleButton>
-                                            <ContentPresenter
-                                                x:Name="ContentSite"
-                                                Margin="8,0,25,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Content="{TemplateBinding SelectionBoxItem}"
-                                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                                IsHitTestVisible="False" />
-                                            <Popup
-                                                x:Name="Popup"
-                                                AllowsTransparency="True"
-                                                Focusable="False"
-                                                IsOpen="{TemplateBinding IsDropDownOpen}"
-                                                Placement="Bottom"
-                                                PopupAnimation="Slide">
-                                                <Grid
-                                                    x:Name="DropDown"
-                                                    MinWidth="{TemplateBinding ActualWidth}"
-                                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                                    SnapsToDevicePixels="True">
-                                                    <Border
-                                                        x:Name="DropDownBorder"
-                                                        Background="White"
-                                                        BorderBrush="#8B1538"
-                                                        BorderThickness="1"
-                                                        CornerRadius="4" />
-                                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
-                                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
-                                                    </ScrollViewer>
-                                                </Grid>
-                                            </Popup>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ComboBox.Style>
-                    <ComboBoxItem Content="Toutes appellations" IsSelected="True" />
-                    <ComboBoxItem Content="Bordeaux" />
-                    <ComboBoxItem Content="Bourgogne" />
-                    <ComboBoxItem Content="Champagne" />
-                    <ComboBoxItem Content="Côtes du Rhône" />
-                    <ComboBoxItem Content="Loire" />
-                    <ComboBoxItem Content="Languedoc" />
-                </ComboBox>
+                <TextBlock Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" Text="Appellation" />
+                <ComboBox x:Name="cmbAppellation" Style="{StaticResource StyledComboBox}" ItemsSource="{Binding Appellations}" SelectedIndex="0" SelectionChanged="Filters_Changed" />
             </StackPanel>
 
-            <!--  Espacement  -->
             <Border Grid.Column="5" Width="15" />
 
-            <!--  Filtre Année  -->
             <StackPanel Grid.Column="6" VerticalAlignment="Center">
-                <TextBlock
-                    Margin="0,0,0,3"
-                    FontSize="12"
-                    FontWeight="Medium"
-                    Foreground="#666666"
-                    Text="Année" />
-                <Border
-                    Background="White"
-                    BorderBrush="#8B1538"
-                    BorderThickness="1"
-                    CornerRadius="4">
-                    <TextBox
-                        x:Name="txtAnnee"
-                        Height="32"
-                        Padding="8,0"
-                        VerticalAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        FontSize="13"
-                        Foreground="#333333">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="TextBox">
-                                            <Grid>
-                                                <ScrollViewer x:Name="PART_ContentHost" />
-                                                <TextBlock
-                                                    Margin="3,0,0,0"
-                                                    VerticalAlignment="Center"
-                                                    Foreground="#AAAAAA"
-                                                    IsHitTestVisible="False"
-                                                    Text="2020">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value="">
-                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                <TextBlock Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" Text="Année" />
+                <Border Background="White" BorderBrush="#8B1538" BorderThickness="1" CornerRadius="4">
+                    <TextBox x:Name="txtAnnee" Height="32" Padding="8,0" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0" FontSize="13" Foreground="#333333" TextChanged="Filters_Changed" />
                 </Border>
             </StackPanel>
 
-            <!--  Espacement  -->
             <Border Grid.Column="7" Width="15" />
 
-            <!--  Filtre Prix maximum  -->
             <StackPanel Grid.Column="8" VerticalAlignment="Center">
-                <TextBlock
-                    Margin="0,0,0,3"
-                    FontSize="12"
-                    FontWeight="Medium"
-                    Foreground="#666666"
-                    Text="Prix max (€)" />
-                <Border
-                    Background="White"
-                    BorderBrush="#8B1538"
-                    BorderThickness="1"
-                    CornerRadius="4">
-                    <TextBox
-                        x:Name="txtPrixMax"
-                        Height="32"
-                        Padding="8,0"
-                        VerticalAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        FontSize="13"
-                        Foreground="#333333">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="TextBox">
-                                            <Grid>
-                                                <ScrollViewer x:Name="PART_ContentHost" />
-                                                <TextBlock
-                                                    Margin="3,0,0,0"
-                                                    VerticalAlignment="Center"
-                                                    Foreground="#AAAAAA"
-                                                    IsHitTestVisible="False"
-                                                    Text="50">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value="">
-                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                <TextBlock Margin="0,0,0,3" FontSize="12" FontWeight="Medium" Foreground="#666666" Text="Prix max (€)" />
+                <Border Background="White" BorderBrush="#8B1538" BorderThickness="1" CornerRadius="4">
+                    <TextBox x:Name="txtPrixMax" Height="32" Padding="8,0" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0" FontSize="13" Foreground="#333333" TextChanged="Filters_Changed" />
                 </Border>
             </StackPanel>
 
-            <!--  Espacement  -->
             <Border Grid.Column="9" Width="15" />
 
-            <!--  Bouton Filtre  -->
-            <Button
-                x:Name="btnFiltre"
-                Grid.Column="10"
-                Padding="20,8"
-                VerticalAlignment="Center"
-                Background="#8B1538"
-                BorderThickness="0"
-                Content="Réinitialiser Filtres"
-                Cursor="Hand"
-                FontSize="14"
-                FontWeight="SemiBold"
-                Foreground="White">
+            <Button x:Name="btnReset" Grid.Column="10" Padding="20,8" VerticalAlignment="Center" Background="#8B1538" BorderThickness="0" Content="Réinitialiser" Cursor="Hand" FontSize="14" FontWeight="SemiBold" Foreground="White" Click="ResetFilters_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border
-                                        Background="{TemplateBinding Background}"
-                                        BorderThickness="0"
-                                        CornerRadius="6">
+                                    <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="6">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                     <ControlTemplate.Triggers>
@@ -493,15 +189,9 @@
 
         </Grid>
 
-        <!--  LIGNE DU BAS : Catalogue des vins  -->
-        <Border
-            Grid.Row="1"
-            Background="White"
-            BorderBrush="#8B1538"
-            BorderThickness="2"
-            CornerRadius="8">
+        <Border Grid.Row="1" Background="White" BorderBrush="#8B1538" BorderThickness="2" CornerRadius="8">
             <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="itemControlVins">
+                <ItemsControl x:Name="itemControlVins" ItemsSource="{Binding FilteredVins}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel Orientation="Horizontal" />
