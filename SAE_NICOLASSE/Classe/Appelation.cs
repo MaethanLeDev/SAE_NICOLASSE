@@ -8,7 +8,6 @@ namespace SAE_NICOLASSE.Classe
 {
     public class Appelation
     {
-
         private int numappelation;
         private string nomappelation;
 
@@ -24,7 +23,6 @@ namespace SAE_NICOLASSE.Classe
             {
                 return this.numappelation;
             }
-
             set
             {
                 this.numappelation = value;
@@ -37,7 +35,6 @@ namespace SAE_NICOLASSE.Classe
             {
                 return this.nomappelation;
             }
-
             set
             {
                 this.nomappelation = value;

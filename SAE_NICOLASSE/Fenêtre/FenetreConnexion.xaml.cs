@@ -1,92 +1,70 @@
-﻿using Npgsql;
+﻿// ========================================================================
+// FICHIER : Fenêtre/FenetreConnexion.xaml.cs
+// DÉCISION : Je conserve ta version ("moi") car elle contient la nouvelle
+//            logique de connexion directe qui tente d'établir une
+//            connexion avec les identifiants saisis par l'utilisateur.
+// ========================================================================
+
 using SAE_NICOLASSE.Classe;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace SAE_NICOLASSE.Fenêtre
 {
-    /// <summary>
-    /// Logique d'interaction pour FenetreConnexion.xaml
-    /// </summary>
     public partial class FenetreConnexion : Window
     {
-        private List<Employe> lesemployes;
-
-        public Employe ActiveEmploye { get; private set; }
+        public Employe EmployeConnecte { get; private set; }
         public string ActiveUser { get; private set; }
         public string ImagePath { get; private set; }
 
         public FenetreConnexion()
         {
             InitializeComponent();
-            ChargeUtilisateurs();
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            string user = txtUser.Text;
-            string mdp = txtMDP.Password;
-
-            foreach (Employe employe in lesemployes)
+            if (string.IsNullOrWhiteSpace(txtUser.Text) || string.IsNullOrWhiteSpace(txtMDP.Password))
             {
-                if (user == employe.Login && mdp == employe.Mdp)
+                MessageBox.Show("Veuillez entrer un nom d'utilisateur et un mot de passe.", "Champs requis", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                // ÉTAPE 1 : Tenter de créer la connexion avec les identifiants fournis.
+                // Si les identifiants sont faux, le constructeur de DataAccess lèvera une exception.
+                DataAccess.CreerInstance(txtUser.Text, txtMDP.Password);
+
+                // ÉTAPE 2 : Si la connexion a réussi, on récupère les infos de l'employé.
+                // On crée un Employe temporaire juste pour appeler la méthode FindByLogin.
+                Employe employeManager = new Employe();
+                this.EmployeConnecte = employeManager.FindByLogin(txtUser.Text);
+
+                if (this.EmployeConnecte == null)
                 {
-                    this.ActiveEmploye = employe;
-                    this.ActiveUser = employe.Login;
-                    this.ImagePath = $"Fichier/{employe.UnRole.NomRole}.png";
-                    this.DialogResult = true;
-                    return;
+                    // Cas très rare : l'utilisateur existe dans la BDD mais pas dans la table EMPLOYE.
+                    MessageBox.Show("L'utilisateur est valide mais n'est pas enregistré comme employé.", "Erreur de configuration", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    // SUCCÈS !
+                    this.ActiveUser = this.EmployeConnecte.Login;
+                    this.ImagePath = $"Fichier/{this.EmployeConnecte.UnRole.NomRole}.png";
+                    this.DialogResult = true; // On dit à MainWindow que c'est bon.
                 }
             }
-            MessageBox.Show("Identifiant ou mot de passe incorrect.", "Erreur de connexion", MessageBoxButton.OK, MessageBoxImage.Error);
+            catch (Exception ex)
+            {
+                // L'exception vient probablement du constructeur de DataAccess.
+                MessageBox.Show("Échec de la connexion. Vérifiez votre identifiant et mot de passe.", "Erreur d'authentification", MessageBoxButton.OK, MessageBoxImage.Error);
+                LogError.Log(ex, "Erreur de connexion directe à la BDD.");
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
-        }
-
-        public void ChargeUtilisateurs()
-        {
-            // ATTENTION : Cette chaîne de connexion est celle de l'utilisateur "maître" (ex: postgres).
-            // Elle est utilisée UNIQUEMENT dans cette fenêtre pour vérifier le mot de passe.
-            string connectionStringMaitre = "Host=localhost;Port=5432;Username=postgres;Password=r9T10jzEfwqnwd2;Database=SAE;";
-            DataAccess daoMaitre = new DataAccess(connectionStringMaitre);
-
-            lesemployes = new List<Employe>();
-            string sql = "SELECT * FROM employe em JOIN role r ON r.numrole = em.numrole;";
-            using (NpgsqlCommand cmdSelect = new NpgsqlCommand(sql))
-            {
-                try
-                {
-                    DataTable dt = daoMaitre.ExecuteSelect(cmdSelect);
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        Role leRole = new Role(Convert.ToInt32(dr["numrole"]), dr["nomrole"].ToString());
-                        Employe lEmploye = new Employe(Convert.ToInt32(dr["numemploye"]), leRole, dr["nom"].ToString(), dr["prenom"].ToString(), dr["login"].ToString(), dr["mdp"].ToString());
-                        lesemployes.Add(lEmploye);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Impossible de vérifier les utilisateurs. L'application va se fermer.\n" + ex.Message);
-                    LogError.Log(ex, "Erreur critique dans ChargeUtilisateurs");
-                    this.Close();
-                }
-            }
         }
     }
 }

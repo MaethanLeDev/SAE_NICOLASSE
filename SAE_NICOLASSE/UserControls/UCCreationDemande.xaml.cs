@@ -1,21 +1,10 @@
-﻿using SAE_NICOLASSE.Classe;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Npgsql;
+﻿// ========================================================================
+// FICHIER : UserControls/UCCreationDemande.xaml.cs
+// DÉCISION : Ce fichier vient de ta version ("moi"). Il est la logique
+//            derrière la création d'une demande simple et est essentiel
+//            au workflow du vendeur.
+// ========================================================================
+
 using SAE_NICOLASSE.Classe;
 using System;
 using System.Collections.ObjectModel;
@@ -25,13 +14,9 @@ using System.Windows.Controls;
 
 namespace SAE_NICOLASSE.UserControls
 {
-    /// <summary>
-    /// Logique d'interaction pour UCCreationDemande.xaml
-    /// </summary>
     public partial class UCCreationDemande : UserControl, INotifyPropertyChanged
     {
         public event EventHandler DemandeTerminee;
-        private DataAccess dao;
 
         public Vin LeVin { get; set; }
         public Employe LEmploye { get; set; }
@@ -54,12 +39,11 @@ namespace SAE_NICOLASSE.UserControls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public UCCreationDemande(Vin leVin, Employe lEmploye, DataAccess dao)
+        public UCCreationDemande(Vin leVin, Employe lEmploye)
         {
             InitializeComponent();
             this.LeVin = leVin;
             this.LEmploye = lEmploye;
-            this.dao = dao;
 
             LesClients = new ObservableCollection<Client>();
             ChargerClients();
@@ -72,7 +56,7 @@ namespace SAE_NICOLASSE.UserControls
             try
             {
                 Client clientManager = new Client();
-                var tousLesClients = clientManager.FindAll(this.dao);
+                var tousLesClients = clientManager.FindAll();
                 LesClients.Clear();
                 foreach (var client in tousLesClients)
                 {
@@ -140,7 +124,7 @@ namespace SAE_NICOLASSE.UserControls
 
             try
             {
-                int idNouvelleDemande = nouvelleDemande.Create(this.dao);
+                int idNouvelleDemande = nouvelleDemande.Create();
                 MessageBox.Show($"La demande a bien été créée avec le numéro {idNouvelleDemande} !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 DemandeTerminee?.Invoke(this, EventArgs.Empty);

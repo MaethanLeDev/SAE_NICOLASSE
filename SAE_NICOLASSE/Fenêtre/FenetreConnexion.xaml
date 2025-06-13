@@ -62,7 +62,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Image Source="/Assets/image_ba015a.png" 
+        <Image Source="/Fichier/logoNicolas.png"
                MaxHeight="120" Margin="0,30,0,20" Grid.Row="0"/>
 
         <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="40,0">
@@ -81,6 +81,5 @@
                     Style="{StaticResource NicolasButtonStyle}"
                     Click="CancelButton_Click" IsCancel="True"/>
         </StackPanel>
-        <Image Margin="120,8,120,334" Source="/Fichier/logoNicolas.png" Stretch="Fill" Grid.Row="1"/>
     </Grid>
 </Window>

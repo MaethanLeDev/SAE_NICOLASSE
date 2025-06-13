@@ -1,4 +1,10 @@
-﻿using System;
+﻿// ========================================================================
+// FICHIER : Classe/Role.cs
+// DÉCISION : Les deux versions sont identiques. Il n'y a aucun conflit.
+//            Je conserve cette version commune.
+// ========================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +29,6 @@ namespace SAE_NICOLASSE.Classe
             {
                 return this.numRole;
             }
-
             set
             {
                 this.numRole = value;
@@ -36,7 +41,6 @@ namespace SAE_NICOLASSE.Classe
             {
                 return this.nomRole;
             }
-
             set
             {
                 this.nomRole = value;

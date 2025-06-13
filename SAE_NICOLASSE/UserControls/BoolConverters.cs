@@ -1,11 +1,19 @@
-﻿using System;
+﻿// ========================================================================
+// FICHIER : UserControls/BoolConverters.cs
+// DÉCISION : Ce fichier vient entièrement du projet de ton collègue ("lui").
+//            Il contient les convertisseurs nécessaires pour afficher
+//            joliment le statut des commandes (couleurs, texte).
+//            Il est donc ajouté au projet fusionné.
+// ========================================================================
+
+using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace SAE_NICOLASSE.UserControls
 {
-    // Convertisseur pour transformer un bool en couleur de badge
+    // Convertisseur pour transformer un booléen en couleur de badge
     public class BoolToColorConverter : IValueConverter
     {
         public static readonly BoolToColorConverter Instance = new BoolToColorConverter();
@@ -27,7 +35,7 @@ namespace SAE_NICOLASSE.UserControls
         }
     }
 
-    // Convertisseur pour transformer un bool en texte de statut
+    // Convertisseur pour transformer un booléen en texte de statut
     public class BoolToStatusConverter : IValueConverter
     {
         public static readonly BoolToStatusConverter Instance = new BoolToStatusConverter();

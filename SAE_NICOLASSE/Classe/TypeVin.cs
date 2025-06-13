@@ -1,4 +1,10 @@
-﻿using System;
+﻿// ========================================================================
+// FICHIER : Classe/TypeVin.cs
+// DÉCISION : Les deux versions sont identiques. Il n'y a aucun conflit.
+//            Je conserve cette version commune.
+// ========================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +29,6 @@ namespace SAE_NICOLASSE.Classe
             {
                 return this.numType;
             }
-
             set
             {
                 this.numType = value;
@@ -36,7 +41,6 @@ namespace SAE_NICOLASSE.Classe
             {
                 return this.nomType;
             }
-
             set
             {
                 this.nomType = value;

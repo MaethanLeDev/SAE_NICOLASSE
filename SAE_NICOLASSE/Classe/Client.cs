@@ -3,10 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using TD3_BindingBDPension.Model;
 
 namespace SAE_NICOLASSE.Classe
@@ -29,14 +25,14 @@ namespace SAE_NICOLASSE.Classe
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public List<Client> FindAll(DataAccess dao)
+        public List<Client> FindAll()
         {
             List<Client> lesClients = new List<Client>();
             string query = "SELECT numclient, nomclient, prenomclient, mailclient FROM client ORDER BY nomclient, prenomclient;";
 
             using (NpgsqlCommand cmdSelect = new NpgsqlCommand(query))
             {
-                DataTable dt = dao.ExecuteSelect(cmdSelect);
+                DataTable dt = DataAccess.Instance.ExecuteSelect(cmdSelect);
                 foreach (DataRow dr in dt.Rows)
                 {
                     lesClients.Add(new Client(
@@ -50,10 +46,10 @@ namespace SAE_NICOLASSE.Classe
             return lesClients;
         }
 
-        public int Create(DataAccess dao) { throw new NotImplementedException(); }
-        public int Delete(DataAccess dao) { throw new NotImplementedException(); }
-        public List<Client> FindBySelection(string criteres, DataAccess dao) { throw new NotImplementedException(); }
-        public void Read(DataAccess dao) { throw new NotImplementedException(); }
-        public int Update(DataAccess dao) { throw new NotImplementedException(); }
+        public int Create() { throw new NotImplementedException(); }
+        public int Delete() { throw new NotImplementedException(); }
+        public List<Client> FindBySelection(string criteres) { throw new NotImplementedException(); }
+        public void Read() { throw new NotImplementedException(); }
+        public int Update() { throw new NotImplementedException(); }
     }
 }

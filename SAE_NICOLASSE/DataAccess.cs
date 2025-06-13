@@ -1,103 +1,85 @@
-﻿
+﻿// ========================================================================
+// FICHIER : DataAccess.cs
+// DÉCISION : Je conserve ta version ("moi"), car elle est la plus à jour.
+//            Elle contient la bonne chaîne de connexion pour ton serveur
+//            (srv-peda-new:5433) et utilise la bonne logique de
+//            connexion directe que nous avons mise en place.
+// ========================================================================
 
-using System.Collections.Generic;
+using Npgsql;
+using System;
 using System.Data;
 using System.Windows;
-using Microsoft.Extensions.Logging;
-using Npgsql;
-
 
 namespace SAE_NICOLASSE
 {
-
     public class DataAccess
     {
-        private readonly string connectionString;
+        private static DataAccess instance;
         private NpgsqlConnection connection;
 
-        public DataAccess(string connectionString)
+        private DataAccess(string user, string password)
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString), "La chaîne de connexion ne peut pas être vide.");
-            }
-            this.connectionString = connectionString;
-            this.connection = new NpgsqlConnection(this.connectionString);
-        }
-
-        public NpgsqlConnection GetConnection()
-        {
+            // Chaîne de connexion corrigée avec vos informations
+            string connectionString = $"Host=srv-peda-new;Port=5433;Username={user};Password={password};Database=nicolas.bd;Options='-c search_path=leshema'";
             try
             {
-                if (connection.State == ConnectionState.Closed || connection.State == ConnectionState.Broken)
-                {
-                    connection.Open();
-                }
+                this.connection = new NpgsqlConnection(connectionString);
+                this.connection.Open();
             }
             catch (Exception ex)
             {
-                LogError.Log(ex, "Pb de connexion GetConnection \n" + connectionString);
+                LogError.Log(ex, "Échec de la tentative de connexion pour l'utilisateur : " + user);
                 throw;
             }
-            return connection;
+        }
+
+        public static void CreerInstance(string user, string password)
+        {
+            if (instance == null)
+            {
+                instance = new DataAccess(user, password);
+            }
+        }
+
+        public static DataAccess Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    throw new InvalidOperationException("L'instance de DataAccess n'a pas été initialisée. Appelez CreerInstance au préalable.");
+                }
+                return instance;
+            }
         }
 
         public DataTable ExecuteSelect(NpgsqlCommand cmd)
         {
             DataTable dataTable = new DataTable();
-            try
+            cmd.Connection = this.connection;
+            using (var adapter = new NpgsqlDataAdapter(cmd))
             {
-                cmd.Connection = GetConnection();
-                using (var adapter = new NpgsqlDataAdapter(cmd))
-                {
-                    adapter.Fill(dataTable);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogError.Log(ex, "Erreur SQL : " + cmd.CommandText);
-                throw;
+                adapter.Fill(dataTable);
             }
             return dataTable;
         }
 
         public int ExecuteInsert(NpgsqlCommand cmd)
         {
-            try
-            {
-                cmd.Connection = GetConnection();
-                return Convert.ToInt32(cmd.ExecuteScalar());
-            }
-            catch (Exception ex)
-            {
-                LogError.Log(ex, "Pb avec une requete insert " + cmd.CommandText);
-                throw;
-            }
+            cmd.Connection = this.connection;
+            return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
         public int ExecuteSet(NpgsqlCommand cmd)
         {
-            try
-            {
-                cmd.Connection = GetConnection();
-                return cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                LogError.Log(ex, "Pb avec une requete set " + cmd.CommandText);
-                throw;
-            }
+            cmd.Connection = this.connection;
+            return cmd.ExecuteNonQuery();
         }
 
-        public void CloseConnection()
+        public NpgsqlConnection GetConnection()
         {
-            if (connection != null && connection.State == ConnectionState.Open)
-            {
-                connection.Close();
-            }
+            return this.connection;
         }
     }
 }
-
-
-

@@ -1,0 +1,91 @@
+﻿<!-- ======================================================================== -->
+<!-- FICHIER : UserControls/CreationCommande.xaml -->
+<!-- DÉCISION : Ce fichier vient du projet de ton collègue ("lui"). -->
+<!--            C'est une fonctionnalité essentielle pour l'administrateur. -->
+<!--            J'ai standardisé le style pour qu'il soit cohérent. -->
+<!-- ======================================================================== -->
+
+<UserControl x:Class="SAE_NICOLASSE.UserControls.CreationCommande"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="900"
+             Background="#FCF9F9">
+
+    <UserControl.Resources>
+        <Style x:Key="ButtonAsLinkStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="#007bff" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#0056b3" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Padding="20" Background="White" BorderBrush="#dee2e6" BorderThickness="1" CornerRadius="8">
+            <StackPanel>
+                <TextBlock Padding="0,0,0,10" FontSize="20" FontWeight="Bold" Foreground="#8B0000" Text="Détails de la Commande en Cours" />
+
+                <DataGrid x:Name="dgVinsDansLaCommande" MinHeight="100" MaxHeight="250" AutoGenerateColumns="False" ItemsSource="{Binding VinsDansLaCommande}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="*" Binding="{Binding UnVin.NomVin}" Header="Vin" IsReadOnly="True" />
+                        <DataGridTextColumn Width="100" Binding="{Binding QuantiteTotale}" Header="Quantité" IsReadOnly="True" />
+                        <DataGridTemplateColumn Width="100" Header="Action">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.RetirerVinCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" Content="Retirer" Style="{StaticResource ButtonAsLinkStyle}" Click="RetirerDemande_Click" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <StackPanel Margin="0,15,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Margin="5" Padding="15,7" Background="#6c757d" BorderThickness="0" Content="Annuler" Foreground="White" Click="Annuler_Click"/>
+                    <Button Margin="5" Padding="15,7" Background="#8B0000" BorderThickness="0" Content="Valider la Commande" FontWeight="Bold" Foreground="White" Click="ValiderCommande_Click" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Margin="0,20,0,0" Padding="20" Background="White" BorderBrush="#dee2e6" BorderThickness="1" CornerRadius="8">
+            <StackPanel>
+                <TextBlock Padding="0,0,0,10" FontSize="20" FontWeight="Bold" Foreground="#8B0000" Text="Demandes Acceptées Disponibles" />
+                <DataGrid x:Name="dgDemandesDisponibles" AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding DemandesDisponibles}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="100" Binding="{Binding NumDemande}" Header="N° Demande" />
+                        <DataGridTextColumn Width="*" Binding="{Binding NumClient.NomClient}" Header="Client" />
+                        <DataGridTextColumn Width="*" Binding="{Binding UnVin.NomVin}" Header="Vin" />
+                        <DataGridTextColumn Width="*" Binding="{Binding UnVin.UnFournisseur.NomFournisseur}" Header="Fournisseur" />
+                        <DataGridTextColumn Width="100" Binding="{Binding QuantiteDemande}" Header="Quantité" />
+                        <DataGridTemplateColumn Width="100" Header="Action">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.AjouterDemandeCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" Content="Ajouter" Style="{StaticResource ButtonAsLinkStyle}" Click="AjouterDemande_Click" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

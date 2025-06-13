@@ -1,12 +1,17 @@
-﻿using Npgsql;
+﻿// ========================================================================
+// FICHIER : Classe/Vin.cs
+// DÉCISION : Fusion des deux versions.
+//            - La logique de la requête SQL (FindAll) est basée sur celle
+//              de ton collègue, car la jointure sur 'appelation' est plus
+//              conforme au schéma de la base de données.
+//            - La syntaxe des propriétés est ta version, plus moderne.
+// ========================================================================
+
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using TD3_BindingBDPension.Model;
 
@@ -22,20 +27,30 @@ namespace SAE_NICOLASSE.Classe
         public decimal PrixVin { get; set; }
         public string Descriptif { get; set; }
         public int Millesime { get; set; }
-        public string ImagePath => $"/Fichier/Vin{this.UnType.NomType}.png";
 
-        public Vin(int numVin, Fournisseur unFournisseur, TypeVin unType, Appelation uneAppelation, string nomVin, decimal prixVin, string descriptif, int millesime)
-        {
-            this.NumVin = numVin; this.UnFournisseur = unFournisseur; this.UnType = unType; this.UneAppelation = uneAppelation; this.NomVin = nomVin; this.PrixVin = prixVin; this.Descriptif = descriptif; this.Millesime = millesime;
-        }
-        public Vin() { }
+        public string ImagePath => UnType != null ? $"/Fichier/Vin{this.UnType.NomType}.png" : "/Fichier/VinRouge.png";
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public List<Vin> FindAll(DataAccess dao)
+        public Vin(int numVin, Fournisseur unFournisseur, TypeVin unType, Appelation uneAppelation, string nomVin, decimal prixVin, string descriptif, int millesime)
+        {
+            this.NumVin = numVin;
+            this.UnFournisseur = unFournisseur;
+            this.UnType = unType;
+            this.UneAppelation = uneAppelation;
+            this.NomVin = nomVin;
+            this.PrixVin = prixVin;
+            this.Descriptif = descriptif;
+            this.Millesime = millesime;
+        }
+        public Vin() { }
+
+        public List<Vin> FindAll()
         {
             List<Vin> lesVins = new List<Vin>();
-            string sql = @"
+            try
+            {
+                string sql = @"
                 SELECT 
                     v.numvin, v.nomvin, v.prixvin, v.descriptif, v.millesime,
                     f.numfournisseur, f.nomfournisseur,
@@ -47,35 +62,49 @@ namespace SAE_NICOLASSE.Classe
                 JOIN appelation a ON v.numtype2 = a.numtype
                 ORDER BY v.nomvin;";
 
-            using (NpgsqlCommand cmdSelect = new NpgsqlCommand(sql))
-            {
-                DataTable dt = dao.ExecuteSelect(cmdSelect);
-                foreach (DataRow dr in dt.Rows)
+                using (NpgsqlCommand cmdSelect = new NpgsqlCommand(sql))
                 {
-                    Fournisseur leFournisseur = new Fournisseur(Convert.ToInt32(dr["numfournisseur"]), dr["nomfournisseur"].ToString());
-                    TypeVin letypeVin = new TypeVin(Convert.ToInt32(dr["numtype"]), dr["nomtype"].ToString());
-                    Appelation appelation = new Appelation(Convert.ToInt32(dr["numtype"]), dr["nomappelation"].ToString());
+                    DataTable dt = DataAccess.Instance.ExecuteSelect(cmdSelect);
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        Fournisseur leFournisseur = new Fournisseur(
+                            Convert.ToInt32(dr["numfournisseur"]),
+                            dr["nomfournisseur"].ToString()
+                        );
+                        TypeVin letypeVin = new TypeVin(
+                            Convert.ToInt32(dr["numtype"]),
+                            dr["nomtype"].ToString()
+                        );
+                        Appelation appelation = new Appelation(
+                            Convert.ToInt32(dr["numtype"]),
+                            dr["nomappelation"].ToString()
+                        );
 
-                    Vin leVin = new Vin(
-                        Convert.ToInt32(dr["numvin"]),
-                        leFournisseur,
-                        letypeVin,
-                        appelation,
-                        dr["nomvin"].ToString(),
-                        Convert.ToDecimal(dr["prixvin"]),
-                        dr["descriptif"].ToString(),
-                        Convert.ToInt32(dr["millesime"])
-                    );
-                    lesVins.Add(leVin);
+                        Vin leVin = new Vin(
+                            Convert.ToInt32(dr["numvin"]),
+                            leFournisseur,
+                            letypeVin,
+                            appelation,
+                            dr["nomvin"].ToString(),
+                            Convert.ToDecimal(dr["prixvin"]),
+                            dr["descriptif"].ToString(),
+                            Convert.ToInt32(dr["millesime"])
+                        );
+                        lesVins.Add(leVin);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de la récupération des vins : " + ex.Message);
             }
             return lesVins;
         }
 
-        public int Create(DataAccess dao) { throw new NotImplementedException(); }
-        public int Delete(DataAccess dao) { throw new NotImplementedException(); }
-        public List<Vin> FindBySelection(string criteres, DataAccess dao) { throw new NotImplementedException(); }
-        public void Read(DataAccess dao) { throw new NotImplementedException(); }
-        public int Update(DataAccess dao) { throw new NotImplementedException(); }
+        public int Create() { throw new NotImplementedException(); }
+        public int Delete() { throw new NotImplementedException(); }
+        public List<Vin> FindBySelection(string criteres) { throw new NotImplementedException(); }
+        public void Read() { throw new NotImplementedException(); }
+        public int Update() { throw new NotImplementedException(); }
     }
 }

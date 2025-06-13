@@ -1,47 +1,46 @@
-﻿using SAE_NICOLASSE.Classe;
+﻿// ========================================================================
+// FICHIER : UserControls/UCDemande.xaml.cs
+// DÉCISION : Fusion des deux logiques.
+//            - Le constructeur prend le magasin en paramètre pour la
+//              flexibilité (idée de ton collègue).
+//            - L'affichage montre toutes les demandes par défaut.
+//            - La méthode de mise à jour est ta version avec le try-catch,
+//              qui est plus sécurisée.
+// ========================================================================
+
+using SAE_NICOLASSE.Classe;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SAE_NICOLASSE.UserControls
 {
-    /// <summary>
-    /// Logique d'interaction pour UCDemande.xaml
-    /// </summary>
     public partial class UCDemande : UserControl
     {
-        private DataAccess dao;
-
-        public UCDemande(ObservableCollection<Demande> demandes, DataAccess dao)
+        public UCDemande(Magasin leMagasin)
         {
             InitializeComponent();
-            this.dao = dao;
-            dgDemandes.ItemsSource = demandes;
+
+            // On affiche par défaut toutes les demandes.
+            // Le filtrage se fera dans d'autres écrans si nécessaire.
+            dgDemandes.ItemsSource = leMagasin.LesDemandes;
         }
 
         private void dgDemandes_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
+            // On s'assure que l'objet édité est bien une Demande
             if (e.Row.DataContext is Demande demandeModifiee)
             {
                 try
                 {
-                    demandeModifiee.Update(this.dao);
+                    // On appelle la méthode Update de l'objet Demande pour
+                    // sauvegarder le changement de statut dans la base de données.
+                    demandeModifiee.Update();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Mise à jour impossible. Vérifiez les permissions du rôle.\n" + ex.Message, "Erreur de droits", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // Si une erreur survient (ex: droits insuffisants), on prévient l'utilisateur.
+                    MessageBox.Show("Mise à jour impossible : " + ex.Message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
