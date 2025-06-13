@@ -148,6 +148,20 @@ namespace SAE_NICOLASSE.Classe
 
         public List<Commande> FindBySelection(string criteres) { throw new NotImplementedException(); }
         public void Read() { throw new NotImplementedException(); }
-        public int Update() { throw new NotImplementedException(); }
+        public int Update()
+        {
+            // Requête SQL pour mettre à jour le statut "valider" d'une commande spécifique.
+            string sql = @"UPDATE COMMANDE SET valider = @valider WHERE numcommande = @numcommande";
+            using (var cmd = new NpgsqlCommand(sql))
+            {
+                cmd.Parameters.AddWithValue("@valider", this.Valider);
+                cmd.Parameters.AddWithValue("@numcommande", this.Numcommande);
+
+                // Assurez-vous d'utiliser la bonne méthode de votre DataAccess
+                // pour les UPDATE (celle qui utilise ExecuteNonQuery).
+                return DataAccess.Instance.ExecuteSet(cmd);
+            }
+        }
+        }
     }
-}
+

@@ -10,10 +10,8 @@
              Background="#FCF9F9">
 
     <UserControl.Resources>
-        <!-- Convertisseur pour afficher "Oui"/"Non" dans la ComboBox -->
         <classe:BoolToOuiNonConverter x:Key="MonConvertisseurBoolOuiNon"/>
 
-        <!-- Style pour les boutons d'action (Supprimer, etc.) -->
         <Style x:Key="ActionButton" TargetType="Button">
             <Setter Property="Background" Value="#8B1538"/>
             <Setter Property="Foreground" Value="White"/>
@@ -37,7 +35,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Style pour les boutons de suppression dans le DataGrid -->
         <Style x:Key="DeleteButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#EF4444"/>
@@ -64,28 +61,32 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- En-tête de la page -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
             <TextBlock Text="Gestion des Commandes" FontSize="28" FontWeight="Bold" Foreground="#1F2937" VerticalAlignment="Center"/>
             <Button Content="+ Créer une commande" Style="{StaticResource ActionButton}" Margin="20,0,0,0" Click="CreerCommande_Click"/>
         </StackPanel>
 
-        <!-- DataGrid dans une bordure stylisée -->
         <Border Grid.Row="1" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
             <Border.Effect>
                 <DropShadowEffect Color="#000000" Opacity="0.05" BlurRadius="10" ShadowDepth="1"/>
             </Border.Effect>
-            <DataGrid x:Name="dgCommande" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+
+            <DataGrid x:Name="dgCommande" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="N° Commande" Binding="{Binding Numcommande}" Width="120"/>
-                    <DataGridTextColumn Header="Employé" Binding="{Binding UnEmploye.Nom}" Width="*"/>
-                    <DataGridTextColumn Header="Date" Binding="{Binding DateCommande, StringFormat='dd/MM/yyyy'}" Width="120"/>
-                    <DataGridTextColumn Header="Prix Total" Binding="{Binding Prixtotal, StringFormat=C, ConverterCulture='fr-FR'}" Width="120"/>
+
+                    <DataGridTextColumn Header="N° Commande" Binding="{Binding Numcommande}" Width="120" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Employé" Binding="{Binding UnEmploye.Nom}" Width="*" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Date" Binding="{Binding DateCommande, StringFormat='dd/MM/yyyy'}" Width="120" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Prix Total" Binding="{Binding Prixtotal, StringFormat=C, ConverterCulture='fr-FR'}" Width="120" IsReadOnly="True"/>
 
                     <DataGridTemplateColumn Header="Validé" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding Valider, Mode=OneWay}" IsEnabled="False" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding Valider, Mode=TwoWay}" 
+                                          IsEnabled="True" 
+                                          Click="ValiderCheckBox_Click"
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -97,6 +98,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

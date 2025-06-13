@@ -74,5 +74,23 @@ namespace SAE_NICOLASSE.UserControls
                 }
             }
         }
+
+
+
+        private void ValiderCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            // "sender" est la case à cocher qui vient d'être cliquée.
+            // Son "DataContext" est l'objet Commande entier de la ligne correspondante.
+            // On récupère cet objet.
+            if ((sender as CheckBox)?.DataContext is Commande commandeModifiee)
+            {
+                // Grâce au "Mode=TwoWay" dans le XAML, la propriété "Valider" 
+                // de l'objet commandeModifiee a déjà été mise à jour automatiquement.
+
+                // On appelle simplement la méthode Update() de l'objet pour sauvegarder
+                // ce changement (true ou false) de manière permanente dans la base de données.
+                commandeModifiee.Update();
+            }
+        }
     }
 }
