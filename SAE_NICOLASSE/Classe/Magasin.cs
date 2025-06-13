@@ -10,69 +10,23 @@ namespace SAE_NICOLASSE.Classe
 {
     public class Magasin
     {
-        private ObservableCollection<Demande> lesDemandes;
-        private ObservableCollection<Vin> lesVins;
-        private ObservableCollection<Client> lesClients;
-        private ObservableCollection<Commande> lesCommandes;
+        public ObservableCollection<Demande> LesDemandes { get; set; }
+        public ObservableCollection<Vin> LesVins { get; set; }
+        public ObservableCollection<Client> LesClients { get; set; }
+        public ObservableCollection<Commande> LesCommandes { get; set; }
 
-        public Magasin()
+        /// <summary>
+        /// Le constructeur prend maintenant l'objet DataAccess en paramètre
+        /// pour charger les données avec les bons droits.
+        /// </summary>
+        /// <param name="dao">L'instance de DataAccess avec la connexion du bon rôle.</param>
+        public Magasin(DataAccess dao)
         {
-            this.LesDemandes = new ObservableCollection<Demande>(new Demande().FindAll());
-            this.LesVins = new ObservableCollection<Vin>(new Vin().FindAll()); ;
-            this.LesClients = new ObservableCollection<Client>(new Client().FindAll()); ;
-            this.LesCommandes = new ObservableCollection<Commande>(new Commande().FindAll()); ; 
-        }
-
-        public ObservableCollection<Demande> LesDemandes
-        {
-            get
-            {
-                return this.lesDemandes;
-            }
-
-            set
-            {
-                this.lesDemandes = value;
-            }
-        }
-
-        public ObservableCollection<Vin> LesVins
-        {
-            get
-            {
-                return this.lesVins;
-            }
-
-            set
-            {
-                this.lesVins = value;
-            }
-        }
-
-        public ObservableCollection<Client> LesClients
-        {
-            get
-            {
-                return this.lesClients;
-            }
-
-            set
-            {
-                this.lesClients = value;
-            }
-        }
-
-        public ObservableCollection<Commande> LesCommandes
-        {
-            get
-            {
-                return this.lesCommandes;
-            }
-
-            set
-            {
-                this.lesCommandes = value;
-            }
+            // On passe le 'dao' à chaque méthode FindAll
+            this.LesDemandes = new ObservableCollection<Demande>(new Demande().FindAll(dao));
+            this.LesVins = new ObservableCollection<Vin>(new Vin().FindAll(dao));
+            this.LesClients = new ObservableCollection<Client>(new Client().FindAll(dao));
+            this.LesCommandes = new ObservableCollection<Commande>(new Commande().FindAll(dao));
         }
     }
 }

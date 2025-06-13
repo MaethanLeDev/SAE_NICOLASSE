@@ -1,6 +1,7 @@
 ﻿using SAE_NICOLASSE.Classe;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,18 +22,28 @@ namespace SAE_NICOLASSE.UserControls
     /// </summary>
     public partial class UCDemande : UserControl
     {
-        public UCDemande()
+        private DataAccess dao;
+
+        public UCDemande(ObservableCollection<Demande> demandes, DataAccess dao)
         {
-            
             InitializeComponent();
-            
+            this.dao = dao;
+            dgDemandes.ItemsSource = demandes;
         }
 
         private void dgDemandes_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            Demande demandeModifiee = e.Row.DataContext as Demande;
-            demandeModifiee.Update();
-            
+            if (e.Row.DataContext is Demande demandeModifiee)
+            {
+                try
+                {
+                    demandeModifiee.Update(this.dao);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Mise à jour impossible. Vérifiez les permissions du rôle.\n" + ex.Message, "Erreur de droits", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 }

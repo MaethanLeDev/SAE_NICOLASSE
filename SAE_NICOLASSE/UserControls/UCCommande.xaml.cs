@@ -20,25 +20,10 @@ namespace SAE_NICOLASSE.UserControls
 {
     public partial class UCCommande : UserControl
     {
-        public UCCommande()
+        public UCCommande(ObservableCollection<Commande> commandes)
         {
             InitializeComponent();
-            ChargerCommandes();
-        }
-
-        private void ChargerCommandes()
-        {
-            // Récupérer toutes les commandes depuis la BDD
-            Commande commande = new Commande();
-            var commandes = commande.FindAll();
-
-            // Lier les commandes récupérées à la DataGrid
-            dataGridCommandes.ItemsSource = new ObservableCollection<Commande>(commandes);
-        }
-
-        private void dgCommande_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-
+            dataGridCommandes.ItemsSource = commandes;
         }
     }
 }

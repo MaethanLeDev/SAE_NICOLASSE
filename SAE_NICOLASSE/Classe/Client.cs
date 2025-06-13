@@ -13,11 +13,10 @@ namespace SAE_NICOLASSE.Classe
 {
     public class Client : ICrud<Client>, INotifyPropertyChanged
     {
-
-        private int numClient;
-        private string nomClient;
-        private string prenomClient;
-        private string mailClient;
+        public int NumClient { get; set; }
+        public string NomClient { get; set; }
+        public string PrenomClient { get; set; }
+        public string MailClient { get; set; }
 
         public Client(int numClient, string nomClient, string prenomClient, string mailClient)
         {
@@ -28,117 +27,33 @@ namespace SAE_NICOLASSE.Classe
         }
         public Client() { }
 
-        public int NumClient
-        {
-            get
-            {
-                return this.numClient;
-            }
-
-            set
-            {
-                this.numClient = value;
-            }
-        }
-
-        public string NomClient
-        {
-            get
-            {
-                return this.nomClient;
-            }
-
-            set
-            {
-                this.nomClient = value;
-            }
-        }
-
-        public string PrenomClient
-        {
-            get
-            {
-                return this.prenomClient;
-            }
-
-            set
-            {
-                this.prenomClient = value;
-            }
-        }
-
-        public string MailClient
-        {
-            get
-            {
-                return this.mailClient;
-            }
-
-            set
-            {
-                this.mailClient = value;
-            }
-        }
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public int Create()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Delete()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Client> FindAll()
+        public List<Client> FindAll(DataAccess dao)
         {
             List<Client> lesClients = new List<Client>();
-            try
+            string query = "SELECT numclient, nomclient, prenomclient, mailclient FROM client ORDER BY nomclient, prenomclient;";
+
+            using (NpgsqlCommand cmdSelect = new NpgsqlCommand(query))
             {
-                string query = "SELECT numclient, nomclient, prenomclient, mailclient FROM client ORDER BY nomclient, prenomclient;";
-
-                using (NpgsqlCommand cmdSelect = new NpgsqlCommand(query))
+                DataTable dt = dao.ExecuteSelect(cmdSelect);
+                foreach (DataRow dr in dt.Rows)
                 {
-                    DataTable dt = DataAccess.Instance.ExecuteSelect(cmdSelect);
-                    foreach (DataRow dr in dt.Rows)
-                    {
-
-                        Client nouveauClient = new Client(
-                            Convert.ToInt32(dr["numclient"]),
-                            dr["nomclient"].ToString(),
-                            dr["prenomclient"].ToString(),
-                            dr["mailclient"].ToString()
-                        );
-
-                        lesClients.Add(nouveauClient);
-                    }
+                    lesClients.Add(new Client(
+                        Convert.ToInt32(dr["numclient"]),
+                        dr["nomclient"].ToString(),
+                        dr["prenomclient"].ToString(),
+                        dr["mailclient"].ToString()
+                    ));
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erreur lors de la récupération des clients : " + ex.Message);
-            }
-
             return lesClients;
         }
 
-        public List<Client> FindBySelection(string criteres)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Read()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Update()
-        {
-            throw new NotImplementedException();
-        }
-
-       
+        public int Create(DataAccess dao) { throw new NotImplementedException(); }
+        public int Delete(DataAccess dao) { throw new NotImplementedException(); }
+        public List<Client> FindBySelection(string criteres, DataAccess dao) { throw new NotImplementedException(); }
+        public void Read(DataAccess dao) { throw new NotImplementedException(); }
+        public int Update(DataAccess dao) { throw new NotImplementedException(); }
     }
 }

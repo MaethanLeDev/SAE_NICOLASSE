@@ -24,118 +24,69 @@ namespace SAE_NICOLASSE.Fenêtre
     public partial class FenetreConnexion : Window
     {
         private List<Employe> lesemployes;
-        private string activeUser = "";
-        private string imagePath = "";
 
-        public List<Employe> Lesemployes
-        {
-            get
-            {
-                return this.lesemployes;
-            }
-
-            set
-            {
-                this.lesemployes = value;
-            }
-        }
-
-        public string ActiveUser
-        {
-            get
-            {
-                return this.activeUser;
-            }
-
-            set
-            {
-                this.activeUser = value;
-            }
-        }
-
-        public string ImagePath
-        {
-            get
-            {
-                return this.imagePath;
-            }
-
-            set
-            {
-                this.imagePath = value;
-            }
-        }
+        public Employe ActiveEmploye { get; private set; }
+        public string ActiveUser { get; private set; }
+        public string ImagePath { get; private set; }
 
         public FenetreConnexion()
         {
             InitializeComponent();
             ChargeUtilisateurs();
-            
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-
             string user = txtUser.Text;
             string mdp = txtMDP.Password;
 
-            foreach (Employe employe in Lesemployes)
+            foreach (Employe employe in lesemployes)
             {
-                if (user == employe.Login)
+                if (user == employe.Login && mdp == employe.Mdp)
                 {
-                    if (mdp == employe.Mdp)
-                    {
-                        this.DialogResult = true;
-                        ActiveUser = txtUser.Text;
-                        
-                        ImagePath = $"Fichier/{employe.UnRole.NomRole}.png";
-                        
-
-
-
-
-                    }
+                    this.ActiveEmploye = employe;
+                    this.ActiveUser = employe.Login;
+                    this.ImagePath = $"Fichier/{employe.UnRole.NomRole}.png";
+                    this.DialogResult = true;
+                    return;
                 }
             }
-           
-            
+            MessageBox.Show("Identifiant ou mot de passe incorrect.", "Erreur de connexion", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-
+            this.DialogResult = false;
         }
+
         public void ChargeUtilisateurs()
         {
-            List<Employe> lesEmploye = new List<Employe>();
-            using (NpgsqlCommand cmdSelect = new NpgsqlCommand("select * from employe em join role r on r.numrole=em.numrole;"))
-            {
-                
-                DataTable dt = DataAccess.Instance.ExecuteSelect(cmdSelect);
-                foreach (DataRow dr in dt.Rows)
-                {
-                    
-                    Role leRole = new Role(
-                        Convert.ToInt32(dr["numrole"]),
-                        dr["nomrole"].ToString()
-                    );
+            // ATTENTION : Cette chaîne de connexion est celle de l'utilisateur "maître" (ex: postgres).
+            // Elle est utilisée UNIQUEMENT dans cette fenêtre pour vérifier le mot de passe.
+            string connectionStringMaitre = "Host=localhost;Port=5432;Username=postgres;Password=r9T10jzEfwqnwd2;Database=SAE;";
+            DataAccess daoMaitre = new DataAccess(connectionStringMaitre);
 
-                    
-                    Employe lEmploye = new Employe(
-                        Convert.ToInt32(dr["numemploye"]),
-                        leRole, 
-                        dr["nom"].ToString(),
-                        dr["prenom"].ToString(),
-                        dr["login"].ToString(),
-                        dr["mdp"].ToString()
-                    );
-                    lesEmploye.Add(lEmploye);
+            lesemployes = new List<Employe>();
+            string sql = "SELECT * FROM employe em JOIN role r ON r.numrole = em.numrole;";
+            using (NpgsqlCommand cmdSelect = new NpgsqlCommand(sql))
+            {
+                try
+                {
+                    DataTable dt = daoMaitre.ExecuteSelect(cmdSelect);
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        Role leRole = new Role(Convert.ToInt32(dr["numrole"]), dr["nomrole"].ToString());
+                        Employe lEmploye = new Employe(Convert.ToInt32(dr["numemploye"]), leRole, dr["nom"].ToString(), dr["prenom"].ToString(), dr["login"].ToString(), dr["mdp"].ToString());
+                        lesemployes.Add(lEmploye);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Impossible de vérifier les utilisateurs. L'application va se fermer.\n" + ex.Message);
+                    LogError.Log(ex, "Erreur critique dans ChargeUtilisateurs");
+                    this.Close();
                 }
             }
-            this.Lesemployes  = lesEmploye;
         }
-
-
-
     }
 }

@@ -52,11 +52,10 @@
             </Grid.ColumnDefinitions>
 
             <Border
-            Grid.Column="1"
             Height="70"
             Background="#7C0A02"
             CornerRadius="0,0,0,20"
-            VerticalAlignment="Center">
+            VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="48,0,0,0">
                 <Border.Effect>
                     <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
                 </Border.Effect>
@@ -118,7 +117,7 @@
         <ContentControl x:Name="MainContent"/>
 
 
-        
+
 
     </DockPanel>
 </Window>

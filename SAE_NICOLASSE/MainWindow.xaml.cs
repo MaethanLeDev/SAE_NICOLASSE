@@ -1,90 +1,136 @@
-﻿using Npgsql;
-using System.Data;
-using System.Windows;
-using SAE_NICOLASSE.UserControls;
-using SAE_NICOLASSE.Fenêtre;
+﻿using SAE_NICOLASSE;
 using SAE_NICOLASSE.Classe;
-using System;
-using System.ComponentModel; // Ajout nécessaire
+using SAE_NICOLASSE.Fenêtre;
+using SAE_NICOLASSE.UserControls;
+using System.ComponentModel;
+using System.Windows;
 
 namespace SAE_NICOLASSE
 {
-    public partial class MainWindow : Window, INotifyPropertyChanged // Implémentation de INotifyPropertyChanged
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private Magasin monMagasin;
-        private string activeUser = ""; // Variable privée pour ActiveUser
-        private string imagePath = ""; // Variable privée pour ImagePath
+        private string activeUser;
+        private string imagePath;
 
-        // Événement pour notifier les changements de propriétés
-        public event PropertyChangedEventHandler PropertyChanged;
+        public DataAccess Dao { get; private set; }
+        public Employe UtilisateurConnecte { get; private set; }
 
-        public MainWindow()
+        public string ActiveUser
         {
-            InitializeComponent();
-            ChargeData();
-            AfficherLaFenetreDeConnexion();
-            BoutonCatalogue_Click(null, null); // Par défaut, affiche la liste des vins dans le catalogue
+            get => activeUser;
+            set { activeUser = value; OnPropertyChanged(nameof(ActiveUser)); }
+        }
+        public string ImagePath
+        {
+            get => imagePath;
+            set { imagePath = value; OnPropertyChanged(nameof(ImagePath)); }
         }
 
         public Magasin MonMagasin
         {
-            get { return this.monMagasin; }
-            set { this.monMagasin = value; }
+            get => monMagasin;
+            set { monMagasin = value; OnPropertyChanged(nameof(MonMagasin)); }
         }
 
-        // Propriété ActiveUser avec notification de changement
-        public string ActiveUser
-        {
-            get { return this.activeUser; }
-            set
-            {
-                if (this.activeUser != value)
-                {
-                    this.activeUser = value;
-                    OnPropertyChanged(nameof(ActiveUser)); // Notification du changement
-                }
-            }
-        }
-
-        // Propriété ImagePath avec notification de changement
-        public string ImagePath
-        {
-            get { return this.imagePath; }
-            set
-            {
-                if (this.imagePath != value)
-                {
-                    this.imagePath = value;
-                    OnPropertyChanged(nameof(ImagePath)); // Notification du changement
-                }
-            }
-        }
-
-        // Méthode pour déclencher l'événement PropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void AfficherLaFenetreDeConnexion()
+        public MainWindow()
         {
-            FenetreConnexion loginWindow = new FenetreConnexion();
-            //Attend que la fenêtre de connexion soit fermée
-            bool? resultat = loginWindow.ShowDialog();
-            if (resultat != true)
+            InitializeComponent();
+
+            AfficherLaFenetreDeConnexion();
+
+            if (this.UtilisateurConnecte != null)
             {
-                this.Close();
-            }
-            else
-            {
-                // Récupérer l'utilisateur connecté et son image
-                this.ActiveUser = loginWindow.ActiveUser;
-                this.ImagePath = loginWindow.ImagePath;
-                Console.WriteLine($"C'est bon : {this.ActiveUser}, {this.ImagePath}");
+                ChargeData();
+                ConfigurerInterfaceSelonRole();
+
+                if (UtilisateurConnecte.UnRole.NomRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    BoutonDemandes_Click(null, null);
+                }
+                else
+                {
+                    BoutonCatalogue_Click(null, null);
+                }
             }
         }
 
-        // Gérer les clics sur les boutons de navigation
+        private void AfficherLaFenetreDeConnexion()
+        {
+            FenetreConnexion loginWindow = new FenetreConnexion();
+            if (loginWindow.ShowDialog() != true)
+            {
+                this.Close();
+                return;
+            }
+
+            this.UtilisateurConnecte = loginWindow.ActiveEmploye;
+            this.ActiveUser = loginWindow.ActiveUser;
+            this.ImagePath = loginWindow.ImagePath;
+
+            string username;
+            string password;
+
+            if (UtilisateurConnecte.UnRole.NomRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                username = "admin_role";
+                password = "motdepasse_admin";
+            }
+            else
+            {
+                username = "vendeur_role";
+                password = "motdepasse_vendeur";
+            }
+
+            string roleConnectionString = $"Host=localhost;Port=5432;Username={username};Password={password};Database=SAE;";
+            this.Dao = new DataAccess(roleConnectionString);
+        }
+
+        public void ChargeData()
+        {
+            try
+            {
+                this.MonMagasin = new Magasin(this.Dao);
+                this.DataContext = this;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Problème lors de la récupération des données pour le rôle '{UtilisateurConnecte.UnRole.NomRole}'.\nVérifiez les permissions (GRANT) dans la base de données.\n\nErreur : {ex.Message}");
+                LogError.Log(ex, "Erreur SQL lors du chargement des données par rôle.");
+                this.Close();
+            }
+        }
+
+        private void ConfigurerInterfaceSelonRole()
+        {
+            string role = UtilisateurConnecte.UnRole.NomRole;
+
+            if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                BoutonCatalogue.Visibility = Visibility.Collapsed;
+                BoutonCommandes.Visibility = Visibility.Visible;
+                BoutonDemandes.Visibility = Visibility.Visible;
+            }
+            else if (role.Equals("Vendeur", StringComparison.OrdinalIgnoreCase))
+            {
+                BoutonCatalogue.Visibility = Visibility.Visible;
+                BoutonCommandes.Visibility = Visibility.Collapsed;
+                BoutonDemandes.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BoutonCatalogue.Visibility = Visibility.Collapsed;
+                BoutonCommandes.Visibility = Visibility.Collapsed;
+                BoutonDemandes.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void BoutonCatalogue_Click(object sender, RoutedEventArgs e)
         {
             MainContent.Content = new UCListeVin(MonMagasin);
@@ -92,28 +138,12 @@ namespace SAE_NICOLASSE
 
         private void BoutonDemandes_Click(object sender, RoutedEventArgs e)
         {
-            MainContent.Content = new UCDemande();
+            MainContent.Content = new UCDemande(MonMagasin.LesDemandes, this.Dao);
         }
 
         private void BoutonCommandes_Click(object sender, RoutedEventArgs e)
         {
-            MainContent.Content = new UCCommande();
-        }
-
-        public void ChargeData()
-        {
-            try
-            {
-                Magasin monMagasin = new Magasin();
-                this.monMagasin = monMagasin;
-                this.DataContext = this;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Problème lors de récupération des données,veuillez consulter votre admin");
-                LogError.Log(ex, "Erreur SQL");
-                Application.Current.Shutdown();
-            }
+            MainContent.Content = new UCCommande(MonMagasin.LesCommandes);
         }
     }
 }

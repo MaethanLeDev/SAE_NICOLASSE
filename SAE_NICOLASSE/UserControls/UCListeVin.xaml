@@ -375,7 +375,7 @@
                 </ScrollViewer>
 
                 <Border Grid.Row="2" Padding="25" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,1,0,0">
-                    <Button Padding="10" HorizontalAlignment="Stretch" Background="#8B1538" Content="Créer une demande" FontSize="16" FontWeight="Bold" Foreground="White">
+                    <Button x:Name="btnCreerDemande" Padding="10" HorizontalAlignment="Stretch" Background="#8B1538" Content="Créer une demande" FontSize="16" FontWeight="Bold" Foreground="White" Click="BtnCreerDemande_Click">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="8" />
