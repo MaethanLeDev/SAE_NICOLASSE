@@ -1,10 +1,4 @@
-﻿// ========================================================================
-// FICHIER : Classe/Fournisseur.cs
-// DÉCISION : Les deux versions sont identiques. Il n'y a aucun conflit.
-//            Je conserve cette version commune.
-// ========================================================================
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

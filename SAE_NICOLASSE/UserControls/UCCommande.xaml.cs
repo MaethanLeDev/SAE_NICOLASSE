@@ -1,11 +1,4 @@
-﻿// ========================================================================
-// FICHIER : UserControls/UCCommande.xaml.cs
-// DÉCISION : Basé sur la version de ton collègue ("lui"), qui contient
-//            toute la logique métier. J'ai simplifié et clarifié le code
-//            pour qu'il s'intègre parfaitement à notre structure finale.
-// ========================================================================
-
-using SAE_NICOLASSE.Classe;
+﻿using SAE_NICOLASSE.Classe;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -18,30 +11,26 @@ namespace SAE_NICOLASSE.UserControls
         public UCCommande(ObservableCollection<Commande> commandes)
         {
             InitializeComponent();
-            // Le DataContext de ce UserControl est directement la liste des commandes.
-            // Le DataGrid va automatiquement utiliser cette source.
-            this.DataContext = commandes;
+           this.DataContext = commandes;
         }
 
         private void CreerCommande_Click(object sender, RoutedEventArgs e)
         {
-            // 1. On récupère la MainWindow pour accéder à ses propriétés
+            
             MainWindow mainWindow = Window.GetWindow(this) as MainWindow;
             if (mainWindow == null) return;
 
-            // 2. On crée une instance du UserControl de création de commande
             CreationCommande vueCreation = new CreationCommande(mainWindow.MonMagasin);
 
-            // 3. On remplace le contenu actuel de la MainWindow par ce nouveau UserControl
             mainWindow.MainContent.Content = vueCreation;
         }
 
         private void SupprimerCommande_Click(object sender, RoutedEventArgs e)
         {
-            // On récupère l'objet Commande associé à la ligne du bouton cliqué
-            if ((sender as Button)?.DataContext is Commande laCommandeASupprimer)
+            
+            Commande laCommandeASupprimer = (Commande)dgCommande.SelectedItem;
             {
-                // 1. Demander confirmation à l'utilisateur
+                
                 MessageBoxResult resultat = MessageBox.Show(
                     $"Êtes-vous sûr de vouloir supprimer la commande n°{laCommandeASupprimer.Numcommande} ?\n\nCette action est irréversible et déliera les demandes associées.",
                     "Confirmation de suppression",
@@ -52,14 +41,13 @@ namespace SAE_NICOLASSE.UserControls
                 {
                     try
                     {
-                        // 2. Appeler la méthode Delete pour la supprimer de la base de données.
+                        
                         int lignesSupprimees = laCommandeASupprimer.Delete();
 
-                        // 3. Si la suppression en BDD a réussi, on la retire de la liste en mémoire.
+                        
                         if (lignesSupprimees > 0)
                         {
-                            // On récupère la liste des commandes directement depuis le DataContext et on supprime l'élément.
-                            // L'interface se mettra à jour automatiquement grâce à l'ObservableCollection.
+                            
                             if (this.DataContext is ObservableCollection<Commande> commandes)
                             {
                                 commandes.Remove(laCommandeASupprimer);
@@ -79,17 +67,64 @@ namespace SAE_NICOLASSE.UserControls
 
         private void ValiderCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            // "sender" est la case à cocher qui vient d'être cliquée.
-            // Son "DataContext" est l'objet Commande entier de la ligne correspondante.
-            // On récupère cet objet.
-            if ((sender as CheckBox)?.DataContext is Commande commandeModifiee)
-            {
-                // Grâce au "Mode=TwoWay" dans le XAML, la propriété "Valider" 
-                // de l'objet commandeModifiee a déjà été mise à jour automatiquement.
+            
+            Commande commandeModifiee = (Commande)dgCommande.SelectedItem;
+            commandeModifiee.Update();
+            
+        }
 
-                // On appelle simplement la méthode Update() de l'objet pour sauvegarder
-                // ce changement (true ou false) de manière permanente dans la base de données.
-                commandeModifiee.Update();
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            
+            if (!(dgCommande.SelectedItem is Commande))
+            { return; }
+            
+            Commande commandeAEditer = (Commande)dgCommande.SelectedItem; 
+            
+
+            
+            MessageBoxResult resultat = MessageBox.Show(
+                $"Voulez-vous éditer la commande n°{commandeAEditer.Numcommande} ?\n\nL'ancienne commande sera annulée et vous serez redirigé pour la recréer.",
+                "Confirmation d'édition",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (resultat == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    Magasin m = new Magasin();
+                    MainWindow fenetrePrincipale = Window.GetWindow(this) as MainWindow;
+                    
+
+                    List<Demande> demandesARecreer = new List<Demande>();
+                    foreach (Demande d in m.LesDemandes)
+                    {
+                        if (d.NumCommande != null && d.NumCommande.Numcommande == commandeAEditer.Numcommande)
+                        {
+                            demandesARecreer.Add(d);
+                        }
+                    }
+                    int lignesSupprimees = commandeAEditer.Delete();
+
+                    if (lignesSupprimees > 0)
+                    {
+                        m.LesCommandes.Remove(commandeAEditer);
+
+                        
+                        foreach (Demande demande in demandesARecreer)
+                        {
+                            
+                            demande.NumCommande = null;
+                        }
+                        CreationCommande vueCreation = new CreationCommande(m, demandesARecreer);
+                        fenetrePrincipale.MainContent.Content = vueCreation;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erreur lors de la préparation de l'édition : " + ex.Message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
     }

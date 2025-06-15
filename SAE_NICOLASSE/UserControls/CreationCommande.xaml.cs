@@ -8,14 +8,36 @@
 using SAE_NICOLASSE.Classe;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace SAE_NICOLASSE.UserControls
 {
+    
     public partial class CreationCommande : UserControl
     {
+
+        // Constructeur modificaiton Commande
+        public CreationCommande(Magasin leMagasin, List<Demande> demandesAEditer)
+        {
+           
+            InitializeComponent();
+            Magasin magasin = new Magasin();
+
+            
+            GerantPage = new GerantCreationDemande(magasin);
+            GerantPage.DemandesDisponibles = new ObservableCollection<Demande>();
+            foreach (Demande de in magasin.LesDemandes)
+            {
+                if (de.NumCommande is null)
+                GerantPage.DemandesDisponibles.Add(de);
+            }
+            
+            this.DataContext = GerantPage;
+            
+        }
         private GerantCreationDemande GerantPage { get; set; }
         private Magasin Magasin { get; set; }
 
@@ -34,14 +56,40 @@ namespace SAE_NICOLASSE.UserControls
 
         private void AjouterDemande_Click(object sender, RoutedEventArgs e)
         {
-            if (!((sender as Button)?.DataContext is Demande demandeAAjouter)) return;
+            Demande demandeAAjouter = (Demande)dgDemandesDisponibles.SelectedItem;
 
-            LigneCommande ligneExistante = GerantPage.VinsDansLaCommande.FirstOrDefault(l => l.UnVin.NumVin == demandeAAjouter.UnVin.NumVin);
+            LigneCommande ligneExistante = null;
+            foreach(LigneCommande lC in GerantPage.VinsDansLaCommande)
+            {
+                if (demandeAAjouter.UnVin.NomVin == lC.UnVin.NomVin)
+                {
+                    ligneExistante = lC;
+                    break;
+                }
+            }
 
             if (ligneExistante != null)
             {
-                ligneExistante.FusionnerDemande(demandeAAjouter);
-                dgVinsDansLaCommande.Items.Refresh(); // Important pour mettre à jour l'affichage de la quantité
+                MessageBoxResult resultat = MessageBox.Show(
+                "Ce vin est déjà dans la commande. Voulez-vous fusionner les quantités ?",
+                "Confirmation de Fusion",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+                
+                if (resultat == MessageBoxResult.Yes)
+                {
+                    
+                    ligneExistante.FusionnerDemande(demandeAAjouter);
+                    dgVinsDansLaCommande.Items.Refresh();
+                }
+                else
+                {
+                    
+                    GerantPage.VinsDansLaCommande.Add(new LigneCommande(demandeAAjouter));
+                }
+                
+
             }
             else
             {
@@ -53,7 +101,7 @@ namespace SAE_NICOLASSE.UserControls
 
         private void RetirerDemande_Click(object sender, RoutedEventArgs e)
         {
-            if (!((sender as Button)?.DataContext is LigneCommande ligneARetirer)) return;
+            LigneCommande ligneARetirer = (LigneCommande)dgVinsDansLaCommande.SelectedItem;
 
             GerantPage.VinsDansLaCommande.Remove(ligneARetirer);
 
@@ -74,7 +122,6 @@ namespace SAE_NICOLASSE.UserControls
                 return;
             }
 
-            // Logique pour trouver un employé Admin
             Employe admin = fenetrePrincipale.MonMagasin.LesEmployes.FirstOrDefault(em => em.UnRole.NomRole.Equals("Admin", StringComparison.OrdinalIgnoreCase));
             if (admin == null)
             {
@@ -82,45 +129,86 @@ namespace SAE_NICOLASSE.UserControls
                 return;
             }
 
-            // Calcul du prix total
-            decimal prixTotal = 0;
-            foreach (var ligne in GerantPage.VinsDansLaCommande)
+            // stockage ligne
+            Dictionary<int, LigneCommande> lignesVraimentFusionnees = new Dictionary<int, LigneCommande>();
+            foreach (LigneCommande ligneSource in GerantPage.VinsDansLaCommande)
             {
-                prixTotal += ligne.UnVin.PrixVin * ligne.QuantiteTotale;
+
+                int idVin = ligneSource.UnVin.NumVin;
+                // si le vin pas encore dans le stockage on l'ajoute
+                if (!lignesVraimentFusionnees.ContainsKey(idVin))
+                {
+                    // Si on voit ce vin pour la première fois, on l'ajoute.
+                    lignesVraimentFusionnees[idVin] = ligneSource;
+                }
+                //sinon on le fusionne
+                else
+                {
+                    
+                    foreach (Demande demande in ligneSource.DemandesComposees)
+                    {
+                        lignesVraimentFusionnees[idVin].FusionnerDemande(demande);
+                    }
+                }
+            }
+           
+
+            List<LigneCommande> lignesFinalesPourSauvegarde = lignesVraimentFusionnees.Values.ToList();
+
+            //stockage des commandes séparé par fournisseur
+            Dictionary<Fournisseur, List<LigneCommande>> commandesParFournisseur = new Dictionary<Fournisseur, List<LigneCommande>>();
+            foreach (LigneCommande ligne in lignesFinalesPourSauvegarde)
+            {
+                // Si le stockage n'a pas encore le fournisseur il l'ajoute
+                if (!commandesParFournisseur.ContainsKey(ligne.UnVin.UnFournisseur))
+                {
+                    commandesParFournisseur[ligne.UnVin.UnFournisseur] = new List<LigneCommande>();
+                }
+                // Insertion dans la bonne case
+                commandesParFournisseur[ligne.UnVin.UnFournisseur].Add(ligne);
             }
 
-            Commande nouvelleCommande = new Commande(0, admin, DateTime.Now, true, prixTotal);
-
-            try
+            // parcourt le dictionnaire par fournisseur
+            foreach (KeyValuePair<Fournisseur, List<LigneCommande>> paire in commandesParFournisseur)
             {
-                int idNouvelleCommande = nouvelleCommande.Create();
-                nouvelleCommande.Numcommande = idNouvelleCommande;
+                List<LigneCommande> lignesPourCetteCommande = paire.Value;
 
-                foreach (var ligne in GerantPage.VinsDansLaCommande)
+                decimal prixTotal = 0;
+                foreach (LigneCommande ligne in lignesPourCetteCommande)
                 {
-                    // Lier chaque demande originale à la commande nouvellement créée
-                    foreach (var demande in ligne.DemandesComposees)
-                    {
-                        demande.LieAUneCommande(idNouvelleCommande);
-                    }
-
-                    // Créer le détail de la commande
-                    DetailCommande detail = new DetailCommande(nouvelleCommande, ligne.UnVin, ligne.QuantiteTotale, ligne.UnVin.PrixVin * ligne.QuantiteTotale);
-                    detail.Create();
+                    prixTotal += ligne.UnVin.PrixVin * ligne.QuantiteTotale;
                 }
 
-                MessageBox.Show($"Commande n°{idNouvelleCommande} créée avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                Commande nouvelleCommande = new Commande(0, admin, DateTime.Now, true, prixTotal);
 
-                // Revenir à la liste des commandes
-                fenetrePrincipale.ChargeData(); // Recharger toutes les données
-                fenetrePrincipale.MainContent.Content = new UCCommande(fenetrePrincipale.MonMagasin.LesCommandes);
+                try
+                {
+                    int idNouvelleCommande = nouvelleCommande.Create();
+                    nouvelleCommande.Numcommande = idNouvelleCommande;
 
+                    foreach (LigneCommande ligne in lignesPourCetteCommande)
+                    {
+                        foreach (Demande demande in ligne.DemandesComposees)
+                        {
+                            demande.LieAUneCommande(idNouvelleCommande);
+                            fenetrePrincipale.MonMagasin.LesDemandes.Remove(demande);
+                        }
+
+                        DetailCommande detail = new DetailCommande(nouvelleCommande, ligne.UnVin, ligne.QuantiteTotale, ligne.UnVin.PrixVin * ligne.QuantiteTotale);
+                        detail.Create();
+                    }
+
+                    fenetrePrincipale.MonMagasin.LesCommandes.Add(nouvelleCommande);
+                    MessageBox.Show($"Commande n°{idNouvelleCommande} pour le fournisseur '{paire.Key.NomFournisseur}' créée avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Une erreur est survenue pour le fournisseur '{paire.Key.NomFournisseur}' : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Une erreur est survenue lors de la création de la commande : " + ex.Message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
-                LogError.Log(ex, "Erreur lors de la validation d'une commande");
-            }
+
+            
+            fenetrePrincipale.MainContent.Content = new UCCommande(fenetrePrincipale.MonMagasin.LesCommandes);
         }
 
         private void Annuler_Click(object sender, RoutedEventArgs e)

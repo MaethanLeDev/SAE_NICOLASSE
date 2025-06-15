@@ -1,11 +1,4 @@
-﻿<!-- ======================================================================== -->
-<!-- FICHIER : UserControls/CreationCommande.xaml -->
-<!-- DÉCISION : Ce fichier vient du projet de ton collègue ("lui"). -->
-<!--            C'est une fonctionnalité essentielle pour l'administrateur. -->
-<!--            J'ai standardisé le style pour qu'il soit cohérent. -->
-<!-- ======================================================================== -->
-
-<UserControl x:Class="SAE_NICOLASSE.UserControls.CreationCommande"
+﻿<UserControl x:Class="SAE_NICOLASSE.UserControls.CreationCommande"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

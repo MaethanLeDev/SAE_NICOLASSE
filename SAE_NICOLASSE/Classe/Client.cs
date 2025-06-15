@@ -46,7 +46,23 @@ namespace SAE_NICOLASSE.Classe
             return lesClients;
         }
 
-        public int Create() { throw new NotImplementedException(); }
+        public int Create()
+        {
+            // Requête pour insérer un nouveau client et retourner son ID auto-généré
+            string sql = @"INSERT INTO CLIENT (nomclient, prenomclient, mailclient) 
+                   VALUES (@nom, @prenom, @mail) 
+                   RETURNING numclient;";
+
+            using (var cmd = new NpgsqlCommand(sql))
+            {
+                cmd.Parameters.AddWithValue("@nom", this.NomClient);
+                cmd.Parameters.AddWithValue("@prenom", this.PrenomClient);
+                cmd.Parameters.AddWithValue("@mail", this.MailClient);
+
+                // On utilise ExecuteInsert qui est fait pour récupérer un ID en retour
+                return DataAccess.Instance.ExecuteInsert(cmd);
+            }
+        }
         public int Delete() { throw new NotImplementedException(); }
         public List<Client> FindBySelection(string criteres) { throw new NotImplementedException(); }
         public void Read() { throw new NotImplementedException(); }

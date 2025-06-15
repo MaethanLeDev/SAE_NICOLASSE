@@ -1,12 +1,4 @@
-﻿// ========================================================================
-// FICHIER : Classe/Commande.cs
-// DÉCISION : Je conserve la version de ton collègue ("lui").
-//            Elle est fonctionnellement complète, notamment avec la
-//            méthode Delete() qui utilise une transaction pour supprimer
-//            proprement une commande et ses dépendances.
-// ========================================================================
-
-using Npgsql;
+﻿using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -54,52 +46,46 @@ namespace SAE_NICOLASSE.Classe
             }
         }
 
+        // Dans la classe Commande.cs
+
         public int Delete()
         {
-            // Utilisation d'une transaction pour garantir l'intégrité des données.
-            // Soit tout est supprimé, soit rien ne l'est.
-            using (var connection = DataAccess.Instance.GetConnection())
-            using (var transaction = connection.BeginTransaction())
+            try
             {
-                try
+                // Tâche 1: On délie les demandes associées.
+                // On prépare la commande SQL et on l'envoie avec ExecuteSet.
+                string sqlUnlinkDemandes = "UPDATE DEMANDE SET numcommande = NULL WHERE numcommande = @id";
+                using (var cmdUnlink = new NpgsqlCommand(sqlUnlinkDemandes))
                 {
-                    // 1. Délier les demandes associées
-                    string sqlUnlinkDemandes = "UPDATE DEMANDE SET numcommande = NULL WHERE numcommande = @id";
-                    using (var cmdUnlink = new NpgsqlCommand(sqlUnlinkDemandes, connection, transaction))
-                    {
-                        cmdUnlink.Parameters.AddWithValue("@id", this.Numcommande);
-                        cmdUnlink.ExecuteNonQuery();
-                    }
-
-                    // 2. Supprimer les détails de la commande
-                    string sqlDeleteDetails = "DELETE FROM DETAILCOMMANDE WHERE numcommande = @id";
-                    using (var cmdDetails = new NpgsqlCommand(sqlDeleteDetails, connection, transaction))
-                    {
-                        cmdDetails.Parameters.AddWithValue("@id", this.Numcommande);
-                        cmdDetails.ExecuteNonQuery();
-                    }
-
-                    // 3. Supprimer la commande principale
-                    string sqlDeleteCommande = "DELETE FROM COMMANDE WHERE numcommande = @id";
-                    using (var cmdCommande = new NpgsqlCommand(sqlDeleteCommande, connection, transaction))
-                    {
-                        cmdCommande.Parameters.AddWithValue("@id", this.Numcommande);
-                        int rowsAffected = cmdCommande.ExecuteNonQuery();
-
-                        // Si tout s'est bien passé, on valide la transaction
-                        transaction.Commit();
-                        return rowsAffected;
-                    }
+                    cmdUnlink.Parameters.AddWithValue("@id", this.Numcommande);
+                    DataAccess.Instance.ExecuteSet(cmdUnlink);
                 }
-                catch (Exception ex)
+
+                // Tâche 2: On supprime les détails de la commande.
+                string sqlDeleteDetails = "DELETE FROM DETAILCOMMANDE WHERE numcommande = @id";
+                using (var cmdDetails = new NpgsqlCommand(sqlDeleteDetails))
                 {
-                    // En cas d'erreur, on annule toutes les opérations
-                    transaction.Rollback();
-                    MessageBox.Show("Erreur lors de la suppression de la commande : " + ex.Message);
-                    return 0;
+                    cmdDetails.Parameters.AddWithValue("@id", this.Numcommande);
+                    DataAccess.Instance.ExecuteSet(cmdDetails);
+                }
+
+                // Tâche 3: On supprime la commande principale.
+                string sqlDeleteCommande = "DELETE FROM COMMANDE WHERE numcommande = @id";
+                using (var cmdCommande = new NpgsqlCommand(sqlDeleteCommande))
+                {
+                    cmdCommande.Parameters.AddWithValue("@id", this.Numcommande);
+
+                    // On exécute la dernière commande et on retourne le résultat.
+                    return DataAccess.Instance.ExecuteSet(cmdCommande);
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de la suppression de la commande : " + ex.Message);
+                return 0; // On retourne 0 pour signifier qu'il y a eu un échec.
+            }
         }
+
 
         public List<Commande> FindAll()
         {

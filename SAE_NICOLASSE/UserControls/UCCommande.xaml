@@ -82,7 +82,7 @@
                     <DataGridTemplateColumn Header="Validé" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding Valider, Mode=TwoWay}" 
+                                <CheckBox IsChecked="{Binding Valider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                                           IsEnabled="True" 
                                           Click="ValiderCheckBox_Click"
                                           HorizontalAlignment="Center" 
@@ -91,10 +91,18 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Action" Width="100">
+                    <DataGridTemplateColumn Header="Suprimer" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="Supprimer" Style="{StaticResource DeleteButton}" Click="SupprimerCommande_Click"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="Modifier" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Modifier" Style="{StaticResource DeleteButton}" Click="Button_Click" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

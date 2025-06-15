@@ -1,19 +1,10 @@
-﻿// ========================================================================
-// FICHIER : Classe/Demande.cs
-// DÉCISION : C'est une fusion des deux versions.
-//            - J'ai conservé ta méthode Create() pour la création de demandes.
-//            - J'ai conservé ta méthode Update() pour le changement de statut.
-//            - J'ai ajouté les méthodes FindBySelection() et LieAUneCommande()
-//              de ton collègue, qui sont nécessaires pour la création
-//              des commandes.
-//            - J'ai gardé la requête FindAll() la plus complète.
-// ========================================================================
-
-using Npgsql;
+﻿using Npgsql;
+using SAE_NICOLASSE.UserControls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Security.Principal;
 using System.Windows;
 using TD3_BindingBDPension.Model;
 
@@ -64,43 +55,63 @@ namespace SAE_NICOLASSE.Classe
             }
         }
 
-        public List<Demande> FindAll()
+        
+
+public List<Demande> FindAll()
         {
             List<Demande> lesDemandes = new List<Demande>();
             try
             {
+                
                 string sql = @"
-                SELECT
-                    d.numdemande, d.datedemande, d.quantitedemande, d.accepter, d.numcommande,
-                    cl.numclient, cl.nomclient, cl.prenomclient, cl.mailclient,
-                    e_dem.numemploye    AS demandeur_num,
-                    e_dem.nom           AS demandeur_nom,
-                    e_dem.prenom        AS demandeur_prenom,
-                    e_dem.login         AS demandeur_login,
-                    e_dem.mdp           AS demandeur_mdp,
-                    r_dem.numrole       AS demandeur_role_num,
-                    r_dem.nomrole       AS demandeur_role_nom,
-                    v.numvin, v.nomvin, v.prixvin, v.descriptif, v.millesime,
-                    f.numfournisseur, f.nomfournisseur,
-                    tv.numtype, tv.nomtype,
-                    v.numtype2          AS appelation_num, 
-                    a.nomappelation
-                FROM
-                    DEMANDE d
-                    JOIN CLIENT cl ON d.numclient = cl.numclient
-                    JOIN VIN v ON d.numvin = v.numvin
-                    JOIN EMPLOYE e_dem ON d.numemploye = e_dem.numemploye
-                    JOIN FOURNISSEUR f ON v.numfournisseur = f.numfournisseur
-                    JOIN TYPEVIN tv ON v.numtype = tv.numtype
-                    JOIN APPELATION a ON v.numtype2 = a.numtype
-                    JOIN ROLE r_dem ON e_dem.numrole = r_dem.numrole
-                ORDER BY d.datedemande DESC;";
+        SELECT
+            d.numdemande, d.datedemande, d.quantitedemande, d.accepter,
+            
+            cl.numclient, cl.nomclient, cl.prenomclient, cl.mailclient,
+            
+            e_dem.numemploye    AS demandeur_num,
+            e_dem.nom           AS demandeur_nom,
+            e_dem.prenom        AS demandeur_prenom,
+            e_dem.login         AS demandeur_login,
+            e_dem.mdp           AS demandeur_mdp,
+            r_dem.numrole       AS demandeur_role_num,
+            r_dem.nomrole       AS demandeur_role_nom,
+            
+            v.numvin, v.nomvin, v.prixvin, v.descriptif, v.millesime,
+            f.numfournisseur, f.nomfournisseur,
+            tv.numtype, tv.nomtype,
+            v.numtype2          AS appelation_num, 
+            a.nomappelation,
+
+            -- Colonnes de la commande associée (peuvent être NULL)
+            c.numcommande, c.datecommande, c.valider, c.prixtotal,
+            e_cde.numemploye    AS cde_employe_num,
+            e_cde.nom           AS cde_employe_nom,
+            r_cde.numrole       AS cde_role_num,
+            r_cde.nomrole       AS cde_role_nom
+
+        FROM
+            DEMANDE d
+            JOIN CLIENT cl ON d.numclient = cl.numclient
+            JOIN VIN v ON d.numvin = v.numvin
+            JOIN EMPLOYE e_dem ON d.numemploye = e_dem.numemploye
+            JOIN ROLE r_dem ON e_dem.numrole = r_dem.numrole
+            JOIN FOURNISSEUR f ON v.numfournisseur = f.numfournisseur
+            JOIN TYPEVIN tv ON v.numtype = tv.numtype
+            JOIN APPELATION a ON v.numtype2 = a.numtype
+            
+            -- On utilise LEFT JOIN car une demande peut ne pas avoir de commande
+            LEFT JOIN COMMANDE c ON d.numcommande = c.numcommande
+            LEFT JOIN EMPLOYE e_cde ON c.numemploye = e_cde.numemploye
+            LEFT JOIN ROLE r_cde ON e_cde.numrole = r_cde.numrole
+        ORDER BY d.numdemande DESC;";
 
                 using (NpgsqlCommand cmdSelect = new NpgsqlCommand(sql))
                 {
                     DataTable dt = DataAccess.Instance.ExecuteSelect(cmdSelect);
                     foreach (DataRow dr in dt.Rows)
                     {
+                        
                         Client leClient = new Client(Convert.ToInt32(dr["numclient"]), dr["nomclient"].ToString(), dr["prenomclient"].ToString(), dr["mailclient"].ToString());
                         Role roleDemandeur = new Role(Convert.ToInt32(dr["demandeur_role_num"]), dr["demandeur_role_nom"].ToString());
                         Employe employeDemandeur = new Employe(Convert.ToInt32(dr["demandeur_num"]), roleDemandeur, dr["demandeur_nom"].ToString(), dr["demandeur_prenom"].ToString(), dr["demandeur_login"].ToString(), dr["demandeur_mdp"].ToString());
@@ -109,11 +120,30 @@ namespace SAE_NICOLASSE.Classe
                         Appelation lAppelation = new Appelation(Convert.ToInt32(dr["appelation_num"]), dr["nomappelation"].ToString());
                         Vin leVin = new Vin(Convert.ToInt32(dr["numvin"]), leFournisseur, leTypeVin, lAppelation, dr["nomvin"].ToString(), Convert.ToDecimal(dr["prixvin"]), dr["descriptif"].ToString(), Convert.ToInt32(dr["millesime"]));
 
+                        
+                        Commande laCommandeAssociee = null;
+                        
+                        if (dr["numcommande"] != DBNull.Value)
+                        {
+                            
+                            Role roleCommande = new Role(Convert.ToInt32(dr["cde_role_num"]), dr["cde_role_nom"].ToString());
+                            Employe employeCommande = new Employe(Convert.ToInt32(dr["cde_employe_num"]), roleCommande, dr["cde_employe_nom"].ToString(), "", "", "");
+
+                            laCommandeAssociee = new Commande(
+                                Convert.ToInt32(dr["numcommande"]),
+                                employeCommande,
+                                Convert.ToDateTime(dr["datecommande"]),
+                                Convert.ToBoolean(dr["valider"]),
+                                Convert.ToDecimal(dr["prixtotal"])
+                            );
+                        }
+                        
+
                         Demande laDemande = new Demande(
                             Convert.ToInt32(dr["numdemande"]),
                             leVin,
                             employeDemandeur,
-                            null, // On ne charge pas l'objet commande ici pour simplifier
+                            laCommandeAssociee, 
                             leClient,
                             Convert.ToDateTime(dr["datedemande"]),
                             Convert.ToInt32(dr["quantitedemande"]),

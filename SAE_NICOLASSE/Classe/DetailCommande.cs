@@ -1,12 +1,4 @@
-﻿// ========================================================================
-// FICHIER : Classe/DetailCommande.cs
-// DÉCISION : Je conserve la version de ton collègue ("lui").
-//            Elle contient la méthode Create() qui permet d'enregistrer
-//            un détail de commande en base de données, ce qui est essentiel.
-//            Ta version ne contenait que les propriétés.
-// ========================================================================
-
-using Npgsql;
+﻿using Npgsql;
 using System;
 using System.Collections.Generic;
 using TD3_BindingBDPension.Model;

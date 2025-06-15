@@ -17,32 +17,38 @@ namespace SAE_NICOLASSE.UserControls
 {
     public partial class UCDemande : UserControl
     {
-        public UCDemande(Magasin leMagasin)
+        public UCDemande()
         {
+            Magasin magasin = new Magasin();
             InitializeComponent();
-
-            // On affiche par défaut toutes les demandes.
-            // Le filtrage se fera dans d'autres écrans si nécessaire.
-            dgDemandes.ItemsSource = leMagasin.LesDemandes;
+            List<Demande> lesDemandes = new List<Demande>();
+            foreach(Demande demande in magasin.LesDemandes)
+            {
+                if (demande.NumCommande is null)
+                {
+                    lesDemandes.Add(demande);
+                }
+            }
+            dgDemandes.ItemsSource = lesDemandes;
         }
 
         private void dgDemandes_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            // On s'assure que l'objet édité est bien une Demande
-            if (e.Row.DataContext is Demande demandeModifiee)
-            {
+
+             Demande demandeModifiee = (Demande)dgDemandes.SelectedItem;
+
+
                 try
-                {
-                    // On appelle la méthode Update de l'objet Demande pour
-                    // sauvegarder le changement de statut dans la base de données.
-                    demandeModifiee.Update();
-                }
-                catch (Exception ex)
-                {
-                    // Si une erreur survient (ex: droits insuffisants), on prévient l'utilisateur.
-                    MessageBox.Show("Mise à jour impossible : " + ex.Message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            {
+                
+                demandeModifiee.Update();
             }
+            catch (Exception ex)
+            {
+                
+                MessageBox.Show("Mise à jour impossible : " + ex.Message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
     }
 }

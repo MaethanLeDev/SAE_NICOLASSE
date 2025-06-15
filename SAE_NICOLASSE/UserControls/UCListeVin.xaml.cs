@@ -142,12 +142,16 @@ namespace SAE_NICOLASSE.UserControls
         {
             if (pnlDetails.DataContext is Vin vinSelectionne)
             {
-                MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-                if (mainWindow.UtilisateurConnecte != null)
+                // version pls sur pour trouver la fenêtre 
+                MainWindow mainWindow = Window.GetWindow(this) as MainWindow;
+               
+
+                if (mainWindow != null && mainWindow.UtilisateurConnecte != null)
                 {
                     UCCreationDemande ucCreation = new UCCreationDemande(vinSelectionne, mainWindow.UtilisateurConnecte);
                     ucCreation.DemandeTerminee += (s, args) =>
                     {
+                        // Après la création, on recharge les données et on revient à la liste des vins.
                         mainWindow.ChargeData();
                         mainWindow.MainContent.Content = new UCListeVin(mainWindow.MonMagasin);
                     };

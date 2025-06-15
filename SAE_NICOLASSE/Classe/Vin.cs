@@ -1,13 +1,4 @@
-﻿// ========================================================================
-// FICHIER : Classe/Vin.cs
-// DÉCISION : Fusion des deux versions.
-//            - La logique de la requête SQL (FindAll) est basée sur celle
-//              de ton collègue, car la jointure sur 'appelation' est plus
-//              conforme au schéma de la base de données.
-//            - La syntaxe des propriétés est ta version, plus moderne.
-// ========================================================================
-
-using Npgsql;
+﻿using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

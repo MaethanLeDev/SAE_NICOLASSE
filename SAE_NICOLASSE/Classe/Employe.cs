@@ -1,14 +1,4 @@
-﻿// ========================================================================
-// FICHIER : Classe/Employe.cs
-// DÉCISION : C'est une fusion des deux versions.
-//            - Je garde ta méthode FindByLogin() qui est essentielle
-//              pour la nouvelle logique de connexion.
-//            - J'ajoute la méthode FindAll() de ton collègue, qui est
-//              utile pour le reste de l'application.
-//            - Je garde l'implémentation de l'interface ICrud pour la cohérence.
-// ========================================================================
-
-using Npgsql;
+﻿using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

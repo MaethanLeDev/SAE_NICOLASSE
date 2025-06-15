@@ -1,11 +1,4 @@
-﻿// ========================================================================
-// FICHIER : Fenêtre/FenetreConnexion.xaml.cs
-// DÉCISION : Je conserve ta version ("moi") car elle contient la nouvelle
-//            logique de connexion directe qui tente d'établir une
-//            connexion avec les identifiants saisis par l'utilisateur.
-// ========================================================================
-
-using SAE_NICOLASSE.Classe;
+﻿using SAE_NICOLASSE.Classe;
 using System;
 using System.Windows;
 
@@ -30,35 +23,31 @@ namespace SAE_NICOLASSE.Fenêtre
                 return;
             }
 
+            // On prépare l'instance avec les identifiants saisi
+            DataAccess.CreerInstance(txtUser.Text, txtMDP.Password);
+
             try
             {
-                // ÉTAPE 1 : Tenter de créer la connexion avec les identifiants fournis.
-                // Si les identifiants sont faux, le constructeur de DataAccess lèvera une exception.
-                DataAccess.CreerInstance(txtUser.Text, txtMDP.Password);
-
-                // ÉTAPE 2 : Si la connexion a réussi, on récupère les infos de l'employé.
-                // On crée un Employe temporaire juste pour appeler la méthode FindByLogin.
+                
                 Employe employeManager = new Employe();
                 this.EmployeConnecte = employeManager.FindByLogin(txtUser.Text);
 
                 if (this.EmployeConnecte == null)
                 {
-                    // Cas très rare : l'utilisateur existe dans la BDD mais pas dans la table EMPLOYE.
-                    MessageBox.Show("L'utilisateur est valide mais n'est pas enregistré comme employé.", "Erreur de configuration", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Connexion réussie mais l'utilisateur n'est pas trouvé dans la table Employe.", "Erreur de configuration", MessageBoxButton.OK, MessageBoxImage.Error);
+                    DataAccess.ResetInstance(); 
                 }
                 else
                 {
                     // SUCCÈS !
-                    this.ActiveUser = this.EmployeConnecte.Login;
-                    this.ImagePath = $"Fichier/{this.EmployeConnecte.UnRole.NomRole}.png";
-                    this.DialogResult = true; // On dit à MainWindow que c'est bon.
+                    this.DialogResult = true;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // L'exception vient probablement du constructeur de DataAccess.
                 MessageBox.Show("Échec de la connexion. Vérifiez votre identifiant et mot de passe.", "Erreur d'authentification", MessageBoxButton.OK, MessageBoxImage.Error);
-                LogError.Log(ex, "Erreur de connexion directe à la BDD.");
+                
+                DataAccess.ResetInstance();
             }
         }
 

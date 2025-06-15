@@ -16,6 +16,7 @@ namespace SAE_NICOLASSE.UserControls
 {
     public partial class UCCreationDemande : UserControl, INotifyPropertyChanged
     {
+
         public event EventHandler DemandeTerminee;
 
         public Vin LeVin { get; set; }
@@ -32,6 +33,7 @@ namespace SAE_NICOLASSE.UserControls
                 OnPropertyChanged(nameof(ClientSelectionne));
             }
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
@@ -102,7 +104,7 @@ namespace SAE_NICOLASSE.UserControls
 
         private void BtnValider_Click(object sender, RoutedEventArgs e)
         {
-            if (!int.TryParse(txtQuantite.Text, out int quantite) || quantite <= 0)
+            if (!int.TryParse(txtQuantite.Text, out int quantite) || quantite <= 0 || quantite >= 100)
             {
                 MessageBox.Show("Veuillez entrer une quantité valide.", "Erreur de saisie", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -133,6 +135,51 @@ namespace SAE_NICOLASSE.UserControls
             {
                 MessageBox.Show("Une erreur est survenue lors de la création de la demande.\n" + ex.Message, "Erreur Base de Données", MessageBoxButton.OK, MessageBoxImage.Error);
                 LogError.Log(ex, "Erreur lors de la création d'une demande");
+            }
+        }
+
+        private void CreerNouveauClient(object sender, RoutedEventArgs e)
+        {
+            // 1. On vérifie que les champs nécessaires ne sont pas vides
+            if (string.IsNullOrWhiteSpace(txtNouveauNom.Text) || string.IsNullOrWhiteSpace(txtNouveauPrenom.Text))
+            {
+                MessageBox.Show("Veuillez entrer au moins un nom et un prénom pour le nouveau client.", "Champs requis", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 2. On crée un nouvel objet Client avec les informations saisies
+            Client nouveauClient = new Client
+            {
+                NomClient = txtNouveauNom.Text,
+                PrenomClient = txtNouveauPrenom.Text,
+                MailClient = txtNouveauMail.Text
+            };
+
+            try
+            {
+                // 3. On appelle sa méthode Create() pour l'insérer en BDD et récupérer son ID
+                int newId = nouveauClient.Create();
+                nouveauClient.NumClient = newId; // On met à jour l'objet avec son nouvel ID
+
+                // 4. On l'ajoute à la liste affichée dans le DataGrid
+                this.LesClients.Add(nouveauClient);
+
+                // 5. On le sélectionne automatiquement
+                this.ClientSelectionne = nouveauClient;
+                dgClients.SelectedItem = nouveauClient;
+                dgClients.ScrollIntoView(nouveauClient);
+
+                // 6. On vide les champs de saisie
+                txtNouveauNom.Text = "";
+                txtNouveauPrenom.Text = "";
+                txtNouveauMail.Text = "";
+
+                MessageBox.Show("Nouveau client créé et sélectionné avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Une erreur est survenue lors de la création du client : " + ex.Message);
+                LogError.Log(ex, "Erreur création client");
             }
         }
     }
